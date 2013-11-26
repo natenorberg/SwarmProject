@@ -6,6 +6,7 @@ package softcomputing.project4;
 public enum ClusteringAlgorithm
 {
     KMeans,
+    Competitive,
     AntColony,
     PSO
 }

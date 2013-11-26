@@ -1,7 +1,7 @@
 package softcomputing.project4.factories;
 
 import softcomputing.project4.ClusteringAlgorithm;
-import softcomputing.project4.cluster.IClusterer;
+import softcomputing.project4.cluster.*;
 import softcomputing.project4.services.TunableParameterService;
 
 /**
@@ -23,16 +23,21 @@ public class ClustererFactory
         _algorithmType = parameterService.getClusteringAlgorithm();
     }
 
+    /*
+     * Creates the selected clusterer
+     */
     public IClusterer getClusterer() throws ClassNotFoundException
     {
         switch (_algorithmType)
         {
             case KMeans:
-                throw new ClassNotFoundException("Not implemented yet");
+                return new KMeansClusterer();
+            case Competitive:
+                return new CompetitiveClusterer();
             case AntColony:
-                throw new ClassNotFoundException("Not implemented yet");
+                return new AntColonyClusterer();
             case PSO:
-                throw new ClassNotFoundException("Not implemented yet");
+                return new PsoClusterer();
             default:
                 throw new ClassNotFoundException("Not a valid class name");
         }
