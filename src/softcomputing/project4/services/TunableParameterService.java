@@ -1,6 +1,7 @@
 package softcomputing.project4.services;
 
-import softcomputing.project4.ClusteringAlgorithm;
+import softcomputing.project4.enums.ClusteringAlgorithm;
+import softcomputing.project4.enums.DataSetSource;
 
 /**
  * This class is a central location to change all of the tunable parameters for the project
@@ -9,6 +10,7 @@ import softcomputing.project4.ClusteringAlgorithm;
 public class TunableParameterService
 {
     private static TunableParameterService _instance;
+    private final DataSetSource _dataSet;
     private ClusteringAlgorithm _clusteringAlgorithm;
 
     // Private constructor
@@ -16,6 +18,7 @@ public class TunableParameterService
     {
         // Properties will be initialized in here
         _clusteringAlgorithm = ClusteringAlgorithm.KMeans;
+        _dataSet = DataSetSource.Placeholder;
     }
 
     // Gets the singleton instance of this class
@@ -33,4 +36,8 @@ public class TunableParameterService
         return _clusteringAlgorithm;
     }
 
+    // Gets the data set used in this run
+    public DataSetSource getDataSet(){
+        return _dataSet;
+    }
 }

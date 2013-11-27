@@ -1,4 +1,4 @@
-package softcomputing.project4;
+package softcomputing.project4.enums;
 
 /**
  * This file stores the main enums used in this project
