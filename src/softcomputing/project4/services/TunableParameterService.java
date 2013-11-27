@@ -11,6 +11,7 @@ public class TunableParameterService
 {
     private static TunableParameterService _instance;
     private final DataSetSource _dataSet;
+    private final double _sigmoidAlpha;
     private ClusteringAlgorithm _clusteringAlgorithm;
 
     // Private constructor
@@ -19,6 +20,9 @@ public class TunableParameterService
         // Properties will be initialized in here
         _clusteringAlgorithm = ClusteringAlgorithm.KMeans;
         _dataSet = DataSetSource.Placeholder;
+
+        // Competitive network parameters
+        _sigmoidAlpha = 0.5;
     }
 
     // Gets the singleton instance of this class
@@ -39,5 +43,10 @@ public class TunableParameterService
     // Gets the data set used in this run
     public DataSetSource getDataSet(){
         return _dataSet;
+    }
+
+    public double getSigmoidAlpha()
+    {
+        return _sigmoidAlpha;
     }
 }

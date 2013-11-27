@@ -1,5 +1,6 @@
 package softcomputing.project4.factories;
 
+import softcomputing.project4.cluster.competitive.CompetitiveClusterer;
 import softcomputing.project4.enums.ClusteringAlgorithm;
 import softcomputing.project4.cluster.*;
 import softcomputing.project4.services.TunableParameterService;
