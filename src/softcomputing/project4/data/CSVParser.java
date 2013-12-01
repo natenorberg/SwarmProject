@@ -28,6 +28,7 @@ public class CSVParser implements Parser {
 	public DataPoint[] loadDataSet() {
 		ArrayList<String[]> rawData = importData(_filename);
 		DataPoint[] dataset = inputToDataPoints(rawData);
+		dataset = normalizeData(dataset);
 		return dataset;
 	}
 	/**
@@ -35,7 +36,7 @@ public class CSVParser implements Parser {
 	 * @param filepath - location of the file to be imported
 	 * @return an array list of the data in the .csv
 	 */
-	public static ArrayList<String[]> importData(String filepath){
+	public ArrayList<String[]> importData(String filepath){
 		BufferedReader buffReader = null;
 		String line = "";
 		ArrayList<String[]> readPatterns = new ArrayList<String[]>();
@@ -58,7 +59,7 @@ public class CSVParser implements Parser {
 	 * @param inputList
 	 * @return a double array list of input patterns
 	 */
-	public static DataPoint[] inputToDataPoints(ArrayList<String[]> inputList){
+	public DataPoint[] inputToDataPoints(ArrayList<String[]> inputList){
 		DataPoint[] output= new DataPoint[inputList.size()];
 		double[] pointHolder;
 		
@@ -70,5 +71,30 @@ public class CSVParser implements Parser {
 			output[i] = new DataPoint(pointHolder);
 		}
 		return output;
+	}
+	// normalize the data
+	public DataPoint[] normalizeData(DataPoint[] input){
+		DataPoint[] normalized = new DataPoint[input.length];
+		double high;
+		double low;
+		for(int i = 0; i < input[0].getData().length;i ++){ //for each dimension of the data points
+			low = 0;
+			high = 0; 
+			for(int j = 0 ; j < input.length; j ++){ //find the min and max values 
+				//find min
+				if(low > input[j].getData()[i] || j ==0){
+					low = input[j].getData()[i];
+				}
+				//find max
+				if(high < input[j].getData()[i] || j==0){
+					high = input[j].getData()[i];
+				}
+			}
+			for(int j = 0 ; j < input.length; j ++){
+				//normalize within range 0 to 1
+				input[j].getData()[i] = (input[j].getData()[i] - low)/(high-low);
+			}
+		}
+		return normalized;
 	}
 }
