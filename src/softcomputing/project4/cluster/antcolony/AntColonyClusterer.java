@@ -1,7 +1,9 @@
-package softcomputing.project4.cluster;
+package softcomputing.project4.cluster.antcolony;
 
+import softcomputing.project4.cluster.IClusterer;
 import softcomputing.project4.data.DataPoint;
-
+import softcomputing.project4.services.DataSetInformationService;
+import softcomputing.project4.services.TunableParameterService;
 /**
  * Clusters a data set using Ant Colony Optimization
  */
@@ -12,8 +14,8 @@ public class AntColonyClusterer implements IClusterer
 	
 	
     //tunable parameters
-	//number of iteration
-	int _it_num = 0;
+	//number of iterations
+	int _it_num;
 	//size of grid
 	int _x_size = 0;
 	int _y_size = 0;
@@ -26,12 +28,34 @@ public class AntColonyClusterer implements IClusterer
 	float gamma_1 =0;
 	float gamma_2 =0;
 	
-    
-    public void clusterDataSet(DataPoint[] dataSet)
-    {
+    public AntColonyClusterer(){
+    	this(TunableParameterService.getInstance(), DataSetInformationService.getInstance());
+    }
+    public AntColonyClusterer(TunableParameterService parameterService, DataSetInformationService dataSetInformationService){
+    	
+    	//TODO: possibly dynamically determine some of the variables based on the dataset? grid size / ant number?
+    	
+        //tunable parameters
+    	//number of iteration
+    	_it_num = parameterService.getIterationNum();
+    	//size of grid
+    	_x_size = parameterService.getXSize();
+    	_y_size = parameterService.getYSize();
+    	//number of ants
+    	_ant_num = parameterService.getAntNum();
+    	//ant visibility (always odd?)
+    	n_patch= parameterService.getAntVisibility(); 
+    	//Dissimilarity measures 
+    	gamma =parameterService.getGamma();// small --> many clusters, big--> few poorly related clusters 
+    	gamma_1 =parameterService.getGamma1();
+    	gamma_2 =parameterService.getGamma2();
+    	
+
     	_grid = new DataPoint[_x_size][_y_size];
     	_colony = new Ant[_ant_num];
-    
+    	
+    }
+    public void clusterDataSet(DataPoint[] dataSet){
     	//place each data vector from the data set randomly on the grid
 		populateGrid(dataSet);
 		

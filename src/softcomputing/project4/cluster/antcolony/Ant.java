@@ -1,4 +1,4 @@
-package softcomputing.project4.cluster;
+package softcomputing.project4.cluster.antcolony;
 import softcomputing.project4.data.DataPoint;
 
 public class Ant {
