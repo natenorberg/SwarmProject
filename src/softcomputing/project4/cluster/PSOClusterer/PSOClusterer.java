@@ -1,8 +1,6 @@
 package softcomputing.project4.cluster.PSOClusterer;
 
-import java.util.Arrays;
-
-import softcomputing.project4.cluster.IClusterer;
+import softcomputing.project4.cluster.Clusterer;
 import softcomputing.project4.data.DataPoint;
 import softcomputing.project4.services.DataSetInformationService;
 import softcomputing.project4.services.TunableParameterService;
@@ -10,7 +8,7 @@ import softcomputing.project4.services.TunableParameterService;
 /**
  * Clusters a data set using particle swarm optimization
  */
-public class PSOClusterer implements IClusterer
+public class PSOClusterer extends Clusterer
 {
 	Particle[] swarm;
 	int _it_num; //number of iterations
@@ -23,11 +21,11 @@ public class PSOClusterer implements IClusterer
     	this(TunableParameterService.getInstance(), DataSetInformationService.getInstance());
     }
     public PSOClusterer(TunableParameterService parameterService, DataSetInformationService dataSetInformationService){
-    	_it_num = parameterService.getIterations();//number of iterations 
-    	_n_cluster = parameterService.getClusterNum();//number of clusters 
-    	_n_particle = parameterService.getParticleNum();// number of particles 
-    	 _dpVectorLength  =dataSetInformationService.getNumInputs();
-    	_intertia = parameterService.getParticleNum(); //intertia of particles 
+    	_it_num = parameterService.getNumberOfIterations();//number of iterations
+    	_n_cluster = dataSetInformationService.getNumOutputs();//number of clusters
+    	//_n_particle = parameterService.getParticleNum();// number of particles
+    	_dpVectorLength  = dataSetInformationService.getNumInputs();
+    	//_intertia = parameterService.getParticleNum(); //intertia of particles
     	swarm = new Particle[_n_particle];
     	
     }

@@ -2,6 +2,7 @@ package softcomputing.project4.cluster.PSOClusterer;
 
 import java.util.Arrays;
 
+import softcomputing.project4.cluster.Clusterer;
 import softcomputing.project4.data.DataPoint;
 
 public class Particle {
@@ -48,7 +49,7 @@ public class Particle {
 			closestClusterDistance = -1;
 			for(int j = 0 ; j < _centroids.length; j++){ //find the closes cluster
 				
-				clusterDistance = euclideanDistance(dataSet[i].getData(),_centroids[j]);
+				clusterDistance = Clusterer.euclideanDistance(dataSet[i].getData(), _centroids[j]);
 				//if distance to this cluster is less than currently assigned cluster -->reassign
 				if(clusterDistance < closestClusterDistance|| closestClusterDistance == -1){
 					closestCluster = j;
@@ -74,7 +75,7 @@ public class Particle {
 			for(int j = 0; j < _data_assignments.length; j++){ //for each data point
 				if(_data_assignments[j] == i){ //if the data point belong to that centroid
 					members++;
-					clusterfitness += euclideanDistance(_centroids[i],dataSet[j].getData());
+					clusterfitness += Clusterer.euclideanDistance(_centroids[i],dataSet[j].getData());
 				}
 			}
 			clusterfitness = clusterfitness/members;
@@ -121,13 +122,6 @@ public class Particle {
 			tempCopy[i] = Arrays.copyOf(_centroids[i],_centroids[i].length);
 		}
 		return tempCopy;
-	}
-	
-	
-	
-	public double euclideanDistance(double[] a, double[] b){
-		//TODO: use  clusterer class?
-		//find distance
 	}
 
 }

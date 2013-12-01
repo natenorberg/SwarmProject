@@ -1,13 +1,13 @@
 package softcomputing.project4.cluster.antcolony;
 
-import softcomputing.project4.cluster.IClusterer;
+import softcomputing.project4.cluster.Clusterer;
 import softcomputing.project4.data.DataPoint;
 import softcomputing.project4.services.DataSetInformationService;
 import softcomputing.project4.services.TunableParameterService;
 /**
  * Clusters a data set using Ant Colony Optimization
  */
-public class AntColonyClusterer implements IClusterer
+public class AntColonyClusterer extends Clusterer
 {
 	private DataPoint[][] _grid;
 	private Ant[] _colony;
@@ -55,6 +55,7 @@ public class AntColonyClusterer implements IClusterer
     	_colony = new Ant[_ant_num];
     	
     }
+
     public void clusterDataSet(DataPoint[] dataSet){
     	//place each data vector from the data set randomly on the grid
 		populateGrid(dataSet);
@@ -110,7 +111,7 @@ public class AntColonyClusterer implements IClusterer
     }
     /**
      * Place the data vectors randomly on the grid
-     * @param dataSet
+     * @param newPoints
      */
     private void populateGrid(DataPoint[] newPoints){
     	int rand_x;
@@ -135,7 +136,7 @@ public class AntColonyClusterer implements IClusterer
 	    				//if vector present
 	    				if(_grid[i][j]!=null){
 	    					//add to density summation
-	    					score += (1-(euclideanDistance(a_point.getData(), _grid[i][j].getData())/gamma));
+	    					score += (1-(Clusterer.euclideanDistance(a_point.getData(), _grid[i][j].getData())/gamma));
 	    				}
 	    			}
 	    		}
@@ -146,15 +147,6 @@ public class AntColonyClusterer implements IClusterer
     		score = 0;
     	}
     	return score;
-    }
-    // find euclideanDistance
-    private double euclideanDistance(double[] a, double[] b){
-    	double output = 0;
-    	for(int i =0; i < a.length; i ++){
-    		output += Math.pow((a[i]-b[i]),2);
-    	}
-    	output = Math.sqrt(output);
-    	return output;
     }
 
 }

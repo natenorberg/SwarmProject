@@ -1,7 +1,9 @@
 package softcomputing.project4.factories;
 
+import softcomputing.project4.cluster.PSOClusterer.PSOClusterer;
 import softcomputing.project4.cluster.antcolony.AntColonyClusterer;
 import softcomputing.project4.cluster.competitive.CompetitiveClusterer;
+import softcomputing.project4.cluster.kmeans.KMeansClusterer;
 import softcomputing.project4.enums.ClusteringAlgorithm;
 import softcomputing.project4.cluster.*;
 import softcomputing.project4.services.TunableParameterService;
@@ -28,7 +30,7 @@ public class ClustererFactory
     /*
      * Creates the selected clusterer
      */
-    public IClusterer getClusterer() throws ClassNotFoundException
+    public Clusterer getClusterer() throws ClassNotFoundException
     {
         switch (_algorithmType)
         {
@@ -39,7 +41,7 @@ public class ClustererFactory
             case AntColony:
                 return new AntColonyClusterer();
             case PSO:
-                return new PsoClusterer();
+                return new PSOClusterer();
             default:
                 throw new ClassNotFoundException("Not a valid class name");
         }

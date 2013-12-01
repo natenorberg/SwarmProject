@@ -12,6 +12,7 @@ public class TunableParameterService
     private static TunableParameterService _instance;
     private final DataSetSource _dataSet;
     private final double _sigmoidAlpha;
+    private final int _numIterations;
     private ClusteringAlgorithm _clusteringAlgorithm;
     
     
@@ -33,6 +34,7 @@ public class TunableParameterService
         // Properties will be initialized in here
         _clusteringAlgorithm = ClusteringAlgorithm.KMeans;
         _dataSet = DataSetSource.Placeholder;
+        _numIterations = 300;
 
         // Competitive network parameters
         _sigmoidAlpha = 0.5;
@@ -69,6 +71,11 @@ public class TunableParameterService
     // Gets the data set used in this run
     public DataSetSource getDataSet(){
         return _dataSet;
+    }
+
+    // Gets the number of iterations
+    public int getNumberOfIterations() {
+        return _numIterations;
     }
 
     public double getSigmoidAlpha()
