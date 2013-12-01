@@ -51,7 +51,7 @@ public class Cluster
         // Sum over the points and find the distance
         for (DataPoint point : _points)
         {
-            totalDistance += euclideanDistance(point.getData(), _center);
+            totalDistance += Clusterer.euclideanDistance(point.getData(), _center);
         }
 
         return totalDistance;
@@ -76,17 +76,21 @@ public class Cluster
     }
 
     /**
-     * Gets euclidean distance between two points
-     * @param a
-     * @param b
-     * @return distance between a and b
+     * Recalculates the center of the cluster to be the "center of gravity" for all the points in the cluster
+     * Note: This method is to be used exclusively for k-means.
      */
-    private double euclideanDistance(double[] a, double[] b){
-        double output = 0;
-        for(int i =0; i < a.length; i ++){
-            output += Math.pow((a[i]-b[i]),2);
+    public void recalculateCenter()
+    {
+        for (int i=0; i<_center.length; i++)
+        {
+            double sum = 0;
+            for (DataPoint point : _points)
+            {
+                sum += point.getData()[i];
+            }
+
+            double average = sum / _points.size();
+            _center[i] = average;
         }
-        output = Math.sqrt(output);
-        return output;
     }
 }

@@ -11,6 +11,7 @@ public class DataSetInformationService
     private final DataSetSource _dataSet;
     private final int _numInputs;
     private final int _numOutputs;
+    private final String _filename;
 
     private DataSetInformationService(TunableParameterService parameterService) throws IllegalArgumentException
     {
@@ -18,9 +19,10 @@ public class DataSetInformationService
 
         switch (_dataSet)
         {
-            case Placeholder:
-                _numInputs = 5;
+            case GlassIdentification:
+                _numInputs = 9;
                 _numOutputs = 5;
+                _filename = "SC_data/GlassIdentification/GlassIDWithoutClassification.csv";
                 break;
             default:
                 throw new IllegalArgumentException("No information available for that data set");
@@ -54,5 +56,14 @@ public class DataSetInformationService
     public int getNumOutputs()
     {
         return _numOutputs;
+    }
+
+    /**
+     * Gets the filename of the data set
+     * @return filename
+     */
+    public String getFilename()
+    {
+        return _filename;
     }
 }

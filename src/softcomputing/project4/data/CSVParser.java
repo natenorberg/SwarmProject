@@ -1,14 +1,32 @@
 package softcomputing.project4.data;
 
+import softcomputing.project4.services.DataSetInformationService;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 
 public class CSVParser implements Parser {
 
+    private final String _filename;
+
+    /**
+     * Public constructor
+     */
+    public CSVParser()
+    {
+        this(DataSetInformationService.getInstance());
+    }
+
+    // Constructor with dependency injection
+    public CSVParser(DataSetInformationService dataSetInformationService)
+    {
+        _filename = dataSetInformationService.getFilename();
+    }
+
 	@Override
-	public DataPoint[] loadDataSet(String filepath) {
-		ArrayList<String[]> rawData = importData(filepath);
+	public DataPoint[] loadDataSet() {
+		ArrayList<String[]> rawData = importData(_filename);
 		DataPoint[] dataset = inputToDataPoints(rawData);
 		return dataset;
 	}
@@ -31,13 +49,13 @@ public class CSVParser implements Parser {
 			buffReader.close();
 		}
 		catch (Exception e){
-			System.err.println("Errpr: "+ e.getMessage());
+			System.err.println("Error: "+ e.getMessage());
 		}
 		return readPatterns;
 	}
 	/**
 	 * Imports a comma separated file of input patterns
-	 * @param filename
+	 * @param inputList
 	 * @return a double array list of input patterns
 	 */
 	public static DataPoint[] inputToDataPoints(ArrayList<String[]> inputList){

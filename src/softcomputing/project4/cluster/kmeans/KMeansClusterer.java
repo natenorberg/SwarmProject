@@ -58,13 +58,46 @@ public class KMeansClusterer extends Clusterer
 
         for (int i=0; checkStopConditions(i); i++)
         {
+            // Assign points to clusters
+            for (DataPoint point : dataSet)
+            {
+                double shortestDistance = Double.MAX_VALUE; // Set this to max value
+                Cluster closestCentroid = null;
 
+                for (Cluster cluster : _clusters)
+                {
+                    // Find the closest centroid for each point
+                    double distance = Clusterer.euclideanDistance(point.getData(), cluster.getCenter());
+                    if (distance < shortestDistance) {
+                        shortestDistance = distance;
+                        closestCentroid = cluster;
+                    }
+
+                    // Assign point to closest cluster
+                    if (closestCentroid != null && !closestCentroid.getPoints().contains(point))
+                    {
+                        closestCentroid.getPoints().add(point);
+                    }
+
+                    // Remove point from previous cluster if it changes
+                    Cluster oldCentroid = point.getCluster();
+                    if (oldCentroid != closestCentroid) {
+                        oldCentroid.getPoints().remove(point);
+                        point.setCluster(closestCentroid);
+                    }
+                }
+            }
+
+            for (Cluster center : _clusters) {
+                center.recalculateCenter();
+            }
         }
     }
 
     // Checks the stopping conditions
     private boolean checkStopConditions(int iteration)
     {
+        // TODO: Add a converged stopping tag to the algorithm and add in appropriate logic
         return iteration < _numIterations;
     }
 }

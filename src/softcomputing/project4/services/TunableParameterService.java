@@ -33,7 +33,7 @@ public class TunableParameterService
     {
         // Properties will be initialized in here
         _clusteringAlgorithm = ClusteringAlgorithm.KMeans;
-        _dataSet = DataSetSource.Placeholder;
+        _dataSet = DataSetSource.GlassIdentification;
         _numIterations = 300;
 
         // Competitive network parameters

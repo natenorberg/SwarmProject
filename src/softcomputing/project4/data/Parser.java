@@ -6,6 +6,6 @@ package softcomputing.project4.data;
 public interface Parser
 {
     // Loads the data set used by this parser
-    DataPoint[] loadDataSet(String filepath);
+    DataPoint[] loadDataSet();
     
 }
