@@ -81,6 +81,9 @@ public class Cluster
      */
     public void recalculateCenter()
     {
+        if (_points.size() == 0)
+            return;
+
         for (int i=0; i<_center.length; i++)
         {
             double sum = 0;
@@ -92,5 +95,24 @@ public class Cluster
             double average = sum / _points.size();
             _center[i] = average;
         }
+    }
+
+    /**
+     * Gets the average distance between the center and the data points
+     * @return average distance
+     */
+    public double averageDistanceFromCenter()
+    {
+        if (_points.size() == 0)
+            return 0;
+
+        double totalDistance = 0;
+
+        for (DataPoint point : _points)
+        {
+            totalDistance += Clusterer.euclideanDistance(point.getData(), _center);
+        }
+
+        return totalDistance / (double) _points.size();
     }
 }

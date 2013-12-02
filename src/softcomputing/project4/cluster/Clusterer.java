@@ -2,11 +2,15 @@ package softcomputing.project4.cluster;
 
 import softcomputing.project4.data.DataPoint;
 
+import java.util.List;
+
 /**
  * Common interface for all clustering algorithms
  */
 public abstract class Clusterer
 {
+    protected List<Cluster> _clusters;
+
     /**
      * Clusters the data set
      * @param dataSet
@@ -34,8 +38,14 @@ public abstract class Clusterer
      */
     protected double evaluateCluster()
     {
-        // TODO: Find a good metric to compare the different algorithms with
+        // Using average distance to center of cluster as metric
+        double totalDistance = 0;
 
-        return 1; // Placeholder to make the build work until there is something intelligent to put here
+        for (Cluster cluster : _clusters)
+        {
+            totalDistance += cluster.averageDistanceFromCenter();
+        }
+
+        return totalDistance / (double) _clusters.size();
     }
 }

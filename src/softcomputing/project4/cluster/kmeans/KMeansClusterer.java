@@ -17,7 +17,6 @@ public class KMeansClusterer extends Clusterer
 {
     private final int _numClusters;
     private final int _numFeatures;
-    private List<Cluster> _clusters;
     private final int _numIterations;
 
     /**
@@ -58,6 +57,7 @@ public class KMeansClusterer extends Clusterer
 
         for (int i=0; checkStopConditions(i); i++)
         {
+
             // Assign points to clusters
             for (DataPoint point : dataSet)
             {
@@ -72,25 +72,27 @@ public class KMeansClusterer extends Clusterer
                         shortestDistance = distance;
                         closestCentroid = cluster;
                     }
+                }
 
-                    // Assign point to closest cluster
-                    if (closestCentroid != null && !closestCentroid.getPoints().contains(point))
-                    {
-                        closestCentroid.getPoints().add(point);
-                    }
+                // Assign point to closest cluster
+                Cluster oldCentroid = point.getCluster();
+                if (closestCentroid != null && !closestCentroid.getPoints().contains(point))
+                {
+                    closestCentroid.getPoints().add(point);
+                    point.setCluster(closestCentroid);
+                }
 
-                    // Remove point from previous cluster if it changes
-                    Cluster oldCentroid = point.getCluster();
-                    if (oldCentroid != closestCentroid) {
-                        oldCentroid.getPoints().remove(point);
-                        point.setCluster(closestCentroid);
-                    }
+                // Remove point from previous cluster if it changes
+                if (oldCentroid != null && oldCentroid != closestCentroid) {
+                    oldCentroid.getPoints().remove(point);
                 }
             }
 
             for (Cluster center : _clusters) {
                 center.recalculateCenter();
             }
+
+            System.out.format("Run %d: Average distance in clusters: %f\n", i, this.evaluateCluster());
         }
     }
 
