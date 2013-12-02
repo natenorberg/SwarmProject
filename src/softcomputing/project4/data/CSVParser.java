@@ -28,7 +28,9 @@ public class CSVParser implements Parser {
 	public DataPoint[] loadDataSet() {
 		ArrayList<String[]> rawData = importData(_filename);
 		DataPoint[] dataset = inputToDataPoints(rawData);
+		
 		dataset = normalizeData(dataset);
+		
 		return dataset;
 	}
 	/**
@@ -94,6 +96,10 @@ public class CSVParser implements Parser {
 				//normalize within range 0 to 1
 				input[j].getData()[i] = (input[j].getData()[i] - low)/(high-low);
 			}
+			
+		}
+		for(int i = 0 ; i < normalized.length; i ++){
+			normalized[i] =input[i];
 		}
 		return normalized;
 	}
