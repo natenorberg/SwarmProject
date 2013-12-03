@@ -11,6 +11,7 @@ public class Neuron
 {
     private final ActivationFunctionType _functionType;
     private final double _sigmoidAlpha;
+    private final double _learningRate;
     private List<Connection> _inputs;
     private List<Connection> _outputs;
 
@@ -27,6 +28,7 @@ public class Neuron
         _outputs = outputs;
         _functionType = functionType;
         _sigmoidAlpha = parameterService.getSigmoidAlpha();
+        _learningRate = parameterService.getNetworkLearningRate();
     }
 
     // Evaluates this neuron
@@ -90,7 +92,11 @@ public class Neuron
      */
     public void update()
     {
-        // TODO: Add update logic
+        for (Connection input : _inputs)
+        {
+            double newWeight = input.getWeight() + _learningRate * input.getValue();
+            input.setWeight(newWeight);
+        }
     }
 }
 

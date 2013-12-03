@@ -17,7 +17,6 @@ public class CompetitiveClusterer extends Clusterer
     private NeuralNetwork _network;
     private int _numIterations;
     private int _numClusters;
-    private List<Cluster> _clusters;
 
     /**
      * Public constructor
@@ -59,8 +58,30 @@ public class CompetitiveClusterer extends Clusterer
 
                 // Adds the point to the given cluster
                 Cluster cluster = _clusters.get(clusterNumber);
-                cluster.addPoint(point);
+                Cluster oldCluster = point.getCluster();
+
+                // Add point to the cluster it was assigned to
+                if (cluster != null && !cluster.getPoints().contains(point))
+                {
+                    cluster.getPoints().add(point);
+                    point.setCluster(cluster);
+                }
+
+                // Remove point from old cluster if it has changed
+                if (oldCluster != null && oldCluster != cluster)
+                {
+                    oldCluster.getPoints().remove(point);
+                }
+
             }
+
+            // Find the centers of the clusters to evaluate the density better
+            for (Cluster cluster : _clusters)
+            {
+                cluster.recalculateCenter();
+            }
+
+            System.out.format("Run %d: Average distance in clusters: %f\n", i, this.evaluateCluster());
         }
     }
 

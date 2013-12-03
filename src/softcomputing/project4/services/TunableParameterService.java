@@ -2,6 +2,7 @@ package softcomputing.project4.services;
 
 import softcomputing.project4.enums.ClusteringAlgorithm;
 import softcomputing.project4.enums.DataSetSource;
+import softcomputing.project4.enums.StopCondition;
 
 /**
  * This class is a central location to change all of the tunable parameters for the project
@@ -13,7 +14,9 @@ public class TunableParameterService
     private final DataSetSource _dataSet;
     private final double _sigmoidAlpha;
     private final int _numIterations;
+    private final double _networkLearningRate;
     private ClusteringAlgorithm _clusteringAlgorithm;
+    private StopCondition _stopCondition;
     
     
     //tunable parameters for ACO
@@ -34,10 +37,12 @@ public class TunableParameterService
         // Properties will be initialized in here
         _clusteringAlgorithm = ClusteringAlgorithm.KMeans;
         _dataSet = DataSetSource.GlassIdentification;
+        _stopCondition = StopCondition.Convergence;
         _numIterations = 300;
 
         // Competitive network parameters
         _sigmoidAlpha = 0.5;
+        _networkLearningRate = 0.01;
         
         // ACO parameters
         _it_num= 200; //number of iterations
@@ -73,6 +78,11 @@ public class TunableParameterService
         return _dataSet;
     }
 
+    // Gets the stop condition
+    public StopCondition getStopCondition() {
+        return _stopCondition;
+    }
+
     // Gets the number of iterations
     public int getNumberOfIterations() {
         return _numIterations;
@@ -82,6 +92,15 @@ public class TunableParameterService
     {
         return _sigmoidAlpha;
     }
+
+    /**
+     * Gets the learning rate for competitive neural network
+     * @return learning rate
+     */
+    public double getNetworkLearningRate() {
+        return _networkLearningRate;
+    }
+
     public int getIterationNum(){
     	return _it_num;
     }

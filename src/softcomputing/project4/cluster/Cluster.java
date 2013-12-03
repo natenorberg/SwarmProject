@@ -1,6 +1,8 @@
 package softcomputing.project4.cluster;
 
 import softcomputing.project4.data.DataPoint;
+import softcomputing.project4.services.DataSetInformationService;
+import softcomputing.project4.services.TunableParameterService;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +18,13 @@ public class Cluster
     /**
      * Creates a cluster without a given center
      */
-    public Cluster() {
+    public Cluster() { this(DataSetInformationService.getInstance()); }
+
+    /**
+     * Creates a cluster without a given center
+     */
+    public Cluster(DataSetInformationService dataSetInformationService) {
+        _center = new double[dataSetInformationService.getNumInputs()]; // new up the array so that it doesn't blow up later
         _points = new LinkedList<DataPoint>(); // New up the list when the cluster is created to avoid null ref exceptions
     }
 

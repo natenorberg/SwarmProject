@@ -3,6 +3,7 @@ package softcomputing.project4.cluster.kmeans;
 import softcomputing.project4.cluster.Cluster;
 import softcomputing.project4.cluster.Clusterer;
 import softcomputing.project4.data.DataPoint;
+import softcomputing.project4.enums.StopCondition;
 import softcomputing.project4.services.DataSetInformationService;
 import softcomputing.project4.services.TunableParameterService;
 
@@ -18,6 +19,7 @@ public class KMeansClusterer extends Clusterer
     private final int _numClusters;
     private final int _numFeatures;
     private final int _numIterations;
+    private final StopCondition _stopCondition;
 
     /**
      * Public constructor
@@ -35,6 +37,7 @@ public class KMeansClusterer extends Clusterer
     {
         _numClusters = dataInfoService.getNumOutputs();
         _numFeatures = dataInfoService.getNumInputs();
+        _stopCondition = parameterService.getStopCondition();
         _numIterations = parameterService.getNumberOfIterations();
     }
 
@@ -55,8 +58,10 @@ public class KMeansClusterer extends Clusterer
             _clusters.add(new Cluster(coordinates));
         }
 
-        for (int i=0; checkStopConditions(i); i++)
+        boolean converged = false;
+        for (int i=0; checkStopConditions(i, converged); i++)
         {
+            converged = true; // This will be set back to false if not actually converged
 
             // Assign points to clusters
             for (DataPoint point : dataSet)
@@ -85,6 +90,7 @@ public class KMeansClusterer extends Clusterer
                 // Remove point from previous cluster if it changes
                 if (oldCentroid != null && oldCentroid != closestCentroid) {
                     oldCentroid.getPoints().remove(point);
+                    converged = false;
                 }
             }
 
@@ -97,9 +103,18 @@ public class KMeansClusterer extends Clusterer
     }
 
     // Checks the stopping conditions
-    private boolean checkStopConditions(int iteration)
+    private boolean checkStopConditions(int iteration, boolean converged)
     {
-        // TODO: Add a converged stopping tag to the algorithm and add in appropriate logic
-        return iteration < _numIterations;
+        switch (_stopCondition)
+        {
+            case Iterations:
+                return iteration < _numIterations;
+            case Convergence:
+                return !converged;
+            default:
+                throw new IllegalArgumentException("This algorithm does not support that stop condition");
+        }
+
+
     }
 }
