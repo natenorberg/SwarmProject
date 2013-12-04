@@ -60,14 +60,14 @@ public class NeuralNetwork
 
         // Find out which class label the network picked
         int classNumber = -1; // Initialize to -1 (not valid)
-        double highestValue = -1;
+        double lowestValue = Double.MAX_VALUE;
         for (int i=0; i<_outputs.size(); i++)
         {
             double outputValue = _outputs.get(i).getValue();
 
-            if (outputValue > highestValue)
+            if (outputValue < lowestValue)
             {
-                highestValue = outputValue;
+                lowestValue = outputValue;
                 classNumber = i;
             }
         }
@@ -133,7 +133,7 @@ public class NeuralNetwork
             outputList.add(output);
 
             //Create a neuron that has that connection as an output
-            Neuron node = new Neuron(new LinkedList<Connection>(), outputList, ActivationFunctionType.Sigmoid);
+            Neuron node = new Neuron(new LinkedList<Connection>(), outputList, ActivationFunctionType.Linear);
             outputNodes.add(node);
         }
 

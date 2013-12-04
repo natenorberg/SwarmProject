@@ -44,7 +44,7 @@ public class TunableParameterService
         // Properties will be initialized in here
         _clusteringAlgorithm = ClusteringAlgorithm.Competitive;
         _dataSet = DataSetSource.GlassIdentification;
-        _stopCondition = StopCondition.Convergence;
+        _stopCondition = StopCondition.Iterations;
         _numIterations = 300;
         _numIterationsToConverge = 5;
 

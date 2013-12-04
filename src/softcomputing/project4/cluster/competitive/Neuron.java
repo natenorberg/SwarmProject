@@ -51,7 +51,7 @@ public class Neuron
 
         for (Connection input : _inputs)
         {
-            sum += input.getValue() * input.getWeight();
+            sum += Math.pow(input.getValue() - input.getWeight(), 2);
         }
 
         return sum;
