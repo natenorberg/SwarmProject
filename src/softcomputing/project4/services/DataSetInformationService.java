@@ -21,7 +21,7 @@ public class DataSetInformationService
         {
             case GlassIdentification:
                 _numInputs = 9;
-                _numOutputs = 5;
+                _numOutputs = 10;
                 _filename = "SC_data/GlassIdentification/GlassIDWithoutClassification.csv";
                 break;
             default:

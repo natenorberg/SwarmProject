@@ -20,6 +20,7 @@ public class KMeansClusterer extends Clusterer
     private final int _numFeatures;
     private final int _numIterations;
     private final StopCondition _stopCondition;
+    private int _numIterationsToConverge;
 
     /**
      * Public constructor
@@ -39,6 +40,7 @@ public class KMeansClusterer extends Clusterer
         _numFeatures = dataInfoService.getNumInputs();
         _stopCondition = parameterService.getStopCondition();
         _numIterations = parameterService.getNumberOfIterations();
+        _numIterationsToConverge = parameterService.getNumIterationsToConverge();
     }
 
     @Override
@@ -58,10 +60,10 @@ public class KMeansClusterer extends Clusterer
             _clusters.add(new Cluster(coordinates));
         }
 
-        boolean converged = false;
-        for (int i=0; checkStopConditions(i, converged); i++)
+        int convergedRuns = 0;
+        for (int i=0; checkStopConditions(i, convergedRuns); i++)
         {
-            converged = true; // This will be set back to false if not actually converged
+            convergedRuns++; // This will be set back to false if not actually converged
 
             // Assign points to clusters
             for (DataPoint point : dataSet)
@@ -90,7 +92,7 @@ public class KMeansClusterer extends Clusterer
                 // Remove point from previous cluster if it changes
                 if (oldCentroid != null && oldCentroid != closestCentroid) {
                     oldCentroid.getPoints().remove(point);
-                    converged = false;
+                    convergedRuns = 0; // The algorithm has not converged so set this back to 0
                 }
             }
 
@@ -103,14 +105,14 @@ public class KMeansClusterer extends Clusterer
     }
 
     // Checks the stopping conditions
-    private boolean checkStopConditions(int iteration, boolean converged)
+    private boolean checkStopConditions(int iteration, int convergedRuns)
     {
         switch (_stopCondition)
         {
             case Iterations:
                 return iteration < _numIterations;
             case Convergence:
-                return !converged;
+                return convergedRuns != _numIterationsToConverge;
             default:
                 throw new IllegalArgumentException("This algorithm does not support that stop condition");
         }

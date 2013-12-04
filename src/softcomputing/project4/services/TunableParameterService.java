@@ -17,6 +17,7 @@ public class TunableParameterService
     private final double _networkLearningRate;
     private ClusteringAlgorithm _clusteringAlgorithm;
     private StopCondition _stopCondition;
+    private final int _numIterationsToConverge;
     
     
     //tunable parameters for ACO
@@ -45,6 +46,7 @@ public class TunableParameterService
         _dataSet = DataSetSource.GlassIdentification;
         _stopCondition = StopCondition.Convergence;
         _numIterations = 300;
+        _numIterationsToConverge = 5;
 
         // Competitive network parameters
         _sigmoidAlpha = 0.5;
@@ -101,6 +103,12 @@ public class TunableParameterService
         return _numIterations;
     }
 
+    // Gets the number of iterations that need to have the same classification to be considered converged
+    public int getNumIterationsToConverge() {
+        return _numIterationsToConverge;
+    }
+
+    // Gets the alpha value used to stretch out sigmoid functions
     public double getSigmoidAlpha()
     {
         return _sigmoidAlpha;
