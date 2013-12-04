@@ -30,6 +30,12 @@ public class TunableParameterService
 	private final float _gamma;// small --> many clusters, big--> few poorly related clusters 
 	private final float _gamma_1;
 	private final float _gamma_2;
+	
+	//parameters for PSO
+	private final int _n_particle;
+	private final double _intertia;
+	private final double _phi_pbest;
+	private final double _phi_gbest;
 
     // Private constructor
     private TunableParameterService()
@@ -55,7 +61,14 @@ public class TunableParameterService
     	_gamma = 2;// small --> many clusters, big--> few poorly related clusters 
     	_gamma_1 =4;
     	_gamma_2 =4;
-        
+    	
+    	
+    	
+    	// PSO parameters
+    	_n_particle = 10;
+    	_intertia = .8;
+    	_phi_pbest= .01;
+    	_phi_gbest = .9;
     }
 
     // Gets the singleton instance of this class
@@ -124,5 +137,17 @@ public class TunableParameterService
     }
     public float getGamma2(){
     	return _gamma_2;
+    }
+    public int getParticleNum(){
+    	return _n_particle;
+    }
+    public double getintertia(){
+    	return _intertia;
+    }
+    public double getPhiPbest(){
+    	return _phi_pbest;
+    }
+    public double getPhiGbest(){
+    	return _phi_gbest;
     }
 }

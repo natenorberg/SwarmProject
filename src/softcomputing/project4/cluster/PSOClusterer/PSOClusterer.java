@@ -11,11 +11,11 @@ import softcomputing.project4.services.TunableParameterService;
 public class PSOClusterer extends Clusterer
 {
 	Particle[] swarm;
+	TunableParameterService _myParameterService;
 	int _it_num; //number of iterations
 	int _n_cluster;
 	int _n_particle;
 	int _dpVectorLength;
-	double _intertia;
 	
     public PSOClusterer(){
     	this(TunableParameterService.getInstance(), DataSetInformationService.getInstance());
@@ -23,9 +23,9 @@ public class PSOClusterer extends Clusterer
     public PSOClusterer(TunableParameterService parameterService, DataSetInformationService dataSetInformationService){
     	_it_num = parameterService.getNumberOfIterations();//number of iterations
     	_n_cluster = dataSetInformationService.getNumOutputs();//number of clusters
-    	//_n_particle = parameterService.getParticleNum();// number of particles
+    	_n_particle = parameterService.getParticleNum();// number of particles
     	_dpVectorLength  = dataSetInformationService.getNumInputs();
-    	//_intertia = parameterService.getParticleNum(); //intertia of particles
+    	_myParameterService = parameterService;
     	swarm = new Particle[_n_particle];
     	
     }
@@ -37,7 +37,7 @@ public class PSOClusterer extends Clusterer
 		
     	//initialize each particle to contain N_c randomly selected cluster centroids
 		for(int i = 0; i < swarm.length; i ++){
-    		swarm[i] = new Particle(_n_cluster,_dpVectorLength,_intertia, dataSet);
+    		swarm[i] = new Particle(_n_cluster,_dpVectorLength,_myParameterService, dataSet);
     	}
     	//for each iteration
 		double[][] globalBest = new double[_n_cluster][_dpVectorLength];
@@ -45,14 +45,16 @@ public class PSOClusterer extends Clusterer
 		double currentFitness = -1;
 		for(int i = 0; i < _it_num; i ++){
 			for(int j = 0 ; j < swarm.length; j ++){//for each particle 
+				
 				//assign clusters
 				swarm[j].clusterDataPoints(dataSet);
 				//measure fitness of clusters
 				currentFitness = swarm[j].calculateFitness(dataSet);
-				
+				//System.out.println("particle: "+ j + " fitness is :" + currentFitness);
 				//update global best fitness
 				if(currentFitness< bestFitness || bestFitness ==-1 ){
 					bestFitness = currentFitness;
+					System.out.println("PSO particle: "+j+" iteration: "+i+" best fitness" +bestFitness);
 					globalBest = swarm[j].getCentroidsCopy();
 				}
 				//update the cluster centroids

@@ -1,7 +1,7 @@
 package softcomputing.project4.cluster.PSOClusterer;
 
 import java.util.Arrays;
-
+import softcomputing.project4.services.TunableParameterService;
 import softcomputing.project4.cluster.Clusterer;
 import softcomputing.project4.data.DataPoint;
 
@@ -10,8 +10,8 @@ public class Particle {
 	double _intertia;
 	double _pbest_fitness;
 	
-	double _phi_pbest; //used in velocity update, adjust range of possible change for personal best
-	double _phi_gbest; //used in velocity update, adjust range of possible change for global best
+	double _phi_pbest = .2; //used in velocity update, adjust range of possible change for personal best
+	double _phi_gbest = .2; //used in velocity update, adjust range of possible change for global best
 	
 
 	double[][] _centroids; 
@@ -26,14 +26,19 @@ public class Particle {
 	 * @param centroidLength
 	 * @param dataSet
 	 */
-	public Particle(int NumberOfCentroids,int centroidLength,double intertia, DataPoint[] dataSet){
+	public Particle(int NumberOfCentroids,int centroidLength,TunableParameterService parameterService, DataPoint[] dataSet){
 		_centroids = new double[NumberOfCentroids][centroidLength];
+		_velocity = new double[NumberOfCentroids][centroidLength];
+		_personal_best =new double[NumberOfCentroids][centroidLength];
 		_data_assignments = new int[dataSet.length];
-		_intertia = intertia;
+		_intertia = parameterService.getintertia(); //intertia of particles
+		_phi_pbest = parameterService.getPhiPbest();
+		_phi_gbest =parameterService.getPhiGbest();
+		
 		
 		//initialize centroids as random members of the population. 
 		for(int i = 0 ; i < _centroids.length; i ++){
-			_centroids[i] = dataSet[(int)(Math.random()*dataSet.length)].getData();
+			_centroids[i] = Arrays.copyOf(dataSet[(int)(Math.random()*dataSet.length)].getData(), dataSet[(int)(Math.random()*dataSet.length)].getData().length);
 		}
 	}
 	/**
@@ -79,6 +84,9 @@ public class Particle {
 				}
 			}
 			clusterfitness = clusterfitness/members;
+			if(members ==0){
+				clusterfitness =10;// big penalty for having empty clusters
+			}
 			fitness += clusterfitness;
 		}
 		fitness = fitness/_centroids.length;
