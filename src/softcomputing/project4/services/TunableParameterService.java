@@ -42,7 +42,7 @@ public class TunableParameterService
     private TunableParameterService()
     {
         // Properties will be initialized in here
-        _clusteringAlgorithm = ClusteringAlgorithm.KMeans;
+        _clusteringAlgorithm = ClusteringAlgorithm.Competitive;
         _dataSet = DataSetSource.GlassIdentification;
         _stopCondition = StopCondition.Convergence;
         _numIterations = 300;

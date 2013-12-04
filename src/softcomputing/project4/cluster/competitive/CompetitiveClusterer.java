@@ -3,6 +3,7 @@ package softcomputing.project4.cluster.competitive;
 import softcomputing.project4.cluster.Cluster;
 import softcomputing.project4.cluster.Clusterer;
 import softcomputing.project4.data.DataPoint;
+import softcomputing.project4.enums.StopCondition;
 import softcomputing.project4.services.DataSetInformationService;
 import softcomputing.project4.services.TunableParameterService;
 
@@ -14,6 +15,8 @@ import java.util.List;
  */
 public class CompetitiveClusterer extends Clusterer
 {
+    private final StopCondition _stopCondition;
+    private final int _numIterationsToConverge;
     private NeuralNetwork _network;
     private int _numIterations;
     private int _numClusters;
@@ -37,7 +40,9 @@ public class CompetitiveClusterer extends Clusterer
         _numClusters = dataSetInformationService.getNumOutputs();
         _network = new NeuralNetwork(numInputs, _numClusters);
 
+        _stopCondition = parameterService.getStopCondition();
         _numIterations = parameterService.getNumberOfIterations();
+        _numIterationsToConverge = parameterService.getNumIterationsToConverge();
     }
 
     @Override
@@ -49,8 +54,10 @@ public class CompetitiveClusterer extends Clusterer
             _clusters.add(new Cluster());
         }
 
-        for (int i=0; checkStopConditions(i); i++)
+        int convergedRuns = 0;
+        for (int i=0; checkStopConditions(i, convergedRuns); i++)
         {
+            convergedRuns++; // This will be set back to 0 if we haven't actually converged
             for (DataPoint point : dataSet)
             {
                 // Run the data through the network
@@ -71,6 +78,7 @@ public class CompetitiveClusterer extends Clusterer
                 if (oldCluster != null && oldCluster != cluster)
                 {
                     oldCluster.getPoints().remove(point);
+                    convergedRuns = 0; // The algorithm has not converged
                 }
 
             }
@@ -87,8 +95,16 @@ public class CompetitiveClusterer extends Clusterer
 
     // Checks the stopping conditions and returns true if the algorithm should still run
     // (Moving this to a separate method in case we want to change the stopping conditions)
-    private boolean checkStopConditions(int iteration)
+    private boolean checkStopConditions(int iteration, int convergedRuns)
     {
-        return iteration < _numIterations;
+        switch (_stopCondition)
+        {
+            case Iterations:
+                return iteration < _numIterations;
+            case Convergence:
+                return convergedRuns != _numIterationsToConverge;
+            default:
+                throw new IllegalArgumentException("That stop condition is not supported by this algorithm.");
+        }
     }
 }
