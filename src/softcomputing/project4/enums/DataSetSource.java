@@ -5,7 +5,14 @@ package softcomputing.project4.enums;
  */
 public enum DataSetSource
 {
-    Placeholder, // TODO: Get data sets
     BreastCancer,
-    GlassIdentification
+    Cardiotocography,
+    ClimateModel,
+    EColi,
+    GlassIdentification,
+    HillVally,
+    IndianLiver,
+    Ionosphere,
+    MagicTelescope,
+    Musk
 }

@@ -22,8 +22,6 @@ public class ParserFactory
         switch (_dataSet) {
             default:
                 throw new ClassNotFoundException("No parser exists for that format");
-            case Placeholder:
-                throw new ClassNotFoundException("No parser exists for that format");
         }
     }
 }
