@@ -100,7 +100,8 @@ public class KMeansClusterer extends Clusterer
                 center.recalculateCenter();
             }
 
-            System.out.format("Run %d: Average distance in clusters: %f\n", i, this.evaluateCluster());
+            System.out.format("Run %d: Average distance in clusters: %f, Average distance between clusters: %f\n",
+                    i, this.evaluateCluster(), this.averageDistanceBetweenCenters());
         }
     }
 

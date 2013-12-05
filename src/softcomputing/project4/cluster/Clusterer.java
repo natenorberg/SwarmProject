@@ -48,4 +48,31 @@ public abstract class Clusterer
 
         return totalDistance / (double) _clusters.size();
     }
+
+    protected double averageDistanceBetweenCenters()
+    {
+        double totalDistance = 0;
+        int totalComparisons = 0; //We don't want to count clusters with nothing in them
+
+        //Loop through and find the total distance between all of the cluster centers
+        for (int i=0; i<_clusters.size()-1; i++)
+        {
+            Cluster cluster1 = _clusters.get(i);
+            if (cluster1.getPoints().size() == 0)
+                continue; // Move on to the next cluster and don't do comparisons here. It will only break stuff
+
+            for (int j=i+1; j<_clusters.size(); j++)
+            {
+                Cluster cluster2 = _clusters.get(j);
+                if (cluster2.getPoints().size() == 0)
+                    continue; // Same check as before
+
+                totalDistance += euclideanDistance(cluster1.getCenter(), cluster2.getCenter());
+                totalComparisons++;
+            }
+        }
+
+        // Return the average
+        return totalDistance / (double) totalComparisons;
+    }
 }

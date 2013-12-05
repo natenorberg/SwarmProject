@@ -42,11 +42,11 @@ public class TunableParameterService
     private TunableParameterService()
     {
         // Properties will be initialized in here
-        _clusteringAlgorithm = ClusteringAlgorithm.Competitive;
+        _clusteringAlgorithm = ClusteringAlgorithm.KMeans;
         _dataSet = DataSetSource.Musk;
         _stopCondition = StopCondition.Iterations;
         _numIterations = 300;
-        _numIterationsToConverge = 5;
+        _numIterationsToConverge = 2;
 
         // Competitive network parameters
         _sigmoidAlpha = 0.5;
