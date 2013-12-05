@@ -75,4 +75,40 @@ public abstract class Clusterer
         // Return the average
         return totalDistance / (double) totalComparisons;
     }
+
+    /**
+     * Evaluates the clustering using the Davies-Bouldin index
+     * LaTeX for equation: DB = \frac{1}{n}\sum_{i=1}^{n} max_{i≠j}(\frac{\sigma_i + \sigma_j}{d(c_i, c_j)})
+     * @return DB index
+     */
+    protected double daviesBouldinIndex()
+    {
+        double sum = 0;
+
+        for (int i=0; i<_clusters.size(); i++)
+        {
+            Cluster cluster1 = _clusters.get(i);
+            if (cluster1.getPoints().size() == 0)
+                continue; // Running the math will break everything if there's nothing in the cluster
+
+            double max = Double.MIN_VALUE;
+
+            for (int j=0; j<_clusters.size(); j++)
+            {
+                Cluster cluster2 = _clusters.get(j);
+                if (i == j || cluster2.getPoints().size() == 0)
+                    continue;
+
+                double value = (cluster1.averageDistanceFromCenter() + cluster2.averageDistanceFromCenter())
+                        / euclideanDistance(cluster1.getCenter(), cluster2.getCenter());
+
+                if (value > max)
+                    max = value;
+            }
+
+            sum += max;
+        }
+
+        return (1.0/(double) _clusters.size()) * sum;
+    }
 }

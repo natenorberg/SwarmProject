@@ -20,6 +20,9 @@ public class CompetitiveClusterer extends Clusterer
     private NeuralNetwork _network;
     private int _numIterations;
     private int _numClusters;
+    private final boolean _printIntraClusterDistance;
+    private final boolean _printInterClusterDistance;
+    private final boolean _printDaviesBouldinIndex;
 
     /**
      * Public constructor
@@ -43,6 +46,10 @@ public class CompetitiveClusterer extends Clusterer
         _stopCondition = parameterService.getStopCondition();
         _numIterations = parameterService.getNumberOfIterations();
         _numIterationsToConverge = parameterService.getNumIterationsToConverge();
+
+        _printIntraClusterDistance = parameterService.getPrintIntraClusterDistance();
+        _printInterClusterDistance = parameterService.getPrintInterClusterDistance();
+        _printDaviesBouldinIndex = parameterService.getPrintDaviesBouldinIndex();
     }
 
     @Override
@@ -89,8 +96,17 @@ public class CompetitiveClusterer extends Clusterer
                 cluster.recalculateCenter();
             }
 
-            System.out.format("Run %d: Average distance in clusters: %f, Average distance between clusters: %f\n",
-                    i, this.evaluateCluster(), this.averageDistanceBetweenCenters());
+            // Build a format string based on print parameters
+            String outputString = String.format("Run %d: ", i);
+
+            if (_printIntraClusterDistance)
+                outputString = outputString.concat(String.format("Average distance in clusters: %f, ", this.evaluateCluster()));
+            if (_printInterClusterDistance)
+                outputString = outputString.concat(String.format("Average distance between clusters: %f, ", this.averageDistanceBetweenCenters()));
+            if (_printDaviesBouldinIndex)
+                outputString = outputString.concat(String.format("Davies-Bouldin index: %f, ", this.daviesBouldinIndex()));
+
+            System.out.println(outputString);
         }
     }
 

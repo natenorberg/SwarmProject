@@ -18,7 +18,11 @@ public class TunableParameterService
     private ClusteringAlgorithm _clusteringAlgorithm;
     private StopCondition _stopCondition;
     private final int _numIterationsToConverge;
-    
+
+    // Print parameters
+    private final boolean _printIntraClusterDistance;
+    private final boolean _printInterClusterDistance;
+    private final boolean _printDaviesBouldinIndex;
     
     //tunable parameters for ACO
 	private final int _it_num; //number of iterations
@@ -48,9 +52,14 @@ public class TunableParameterService
         _numIterations = 300;
         _numIterationsToConverge = 2;
 
+        // Print parameters
+        _printIntraClusterDistance = false;
+        _printInterClusterDistance = false;
+        _printDaviesBouldinIndex = true;
+
         // Competitive network parameters
         _sigmoidAlpha = 0.5;
-        _networkLearningRate = 0.01;
+        _networkLearningRate = 0.15;
         
         // ACO parameters
         _it_num= 200; //number of iterations
@@ -107,6 +116,11 @@ public class TunableParameterService
     public int getNumIterationsToConverge() {
         return _numIterationsToConverge;
     }
+
+    // Getters for print booleans
+    public boolean getPrintIntraClusterDistance() { return _printIntraClusterDistance; }
+    public boolean getPrintInterClusterDistance() { return _printInterClusterDistance; }
+    public boolean getPrintDaviesBouldinIndex() { return _printDaviesBouldinIndex; }
 
     // Gets the alpha value used to stretch out sigmoid functions
     public double getSigmoidAlpha()
