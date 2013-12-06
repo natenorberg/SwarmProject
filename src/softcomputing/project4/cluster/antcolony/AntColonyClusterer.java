@@ -1,5 +1,10 @@
 package softcomputing.project4.cluster.antcolony;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import softcomputing.project4.cluster.Cluster;
 import softcomputing.project4.cluster.Clusterer;
 import softcomputing.project4.data.DataPoint;
 import softcomputing.project4.services.DataSetInformationService;
@@ -11,6 +16,7 @@ public class AntColonyClusterer extends Clusterer
 {
 	private DataPoint[][] _grid;
 	private Ant[] _colony;
+	
 	
 	
     //tunable parameters
@@ -27,13 +33,16 @@ public class AntColonyClusterer extends Clusterer
 	float gamma;// small --> many clusters, big--> few poorly related clusters 
 	float gamma_1;
 	float gamma_2;
+
+    private int _numClusters;
+    private final boolean _printIntraClusterDistance;
+    private final boolean _printInterClusterDistance;
+    private final boolean _printDaviesBouldinIndex;
 	
     public AntColonyClusterer(){
     	this(TunableParameterService.getInstance(), DataSetInformationService.getInstance());
     }
     public AntColonyClusterer(TunableParameterService parameterService, DataSetInformationService dataSetInformationService){
-    	
-    	//TODO: possibly dynamically determine some of the variables based on the dataset? grid size / ant number?
     	
         //tunable parameters
     	//number of iteration
@@ -50,9 +59,17 @@ public class AntColonyClusterer extends Clusterer
     	gamma_1 =parameterService.getGamma1();
     	gamma_2 =parameterService.getGamma2();
     	
+    	_numClusters = dataSetInformationService.getNumOutputs();
+    	
 
     	_grid = new DataPoint[_x_size][_y_size];
     	_colony = new Ant[_ant_num];
+    	
+
+        _printIntraClusterDistance = parameterService.getPrintIntraClusterDistance();
+        _printInterClusterDistance = parameterService.getPrintInterClusterDistance();
+        _printDaviesBouldinIndex = parameterService.getPrintDaviesBouldinIndex();
+    	
     	
     }
 
@@ -71,7 +88,6 @@ public class AntColonyClusterer extends Clusterer
 		int new_x;
 		int new_y;
 		//consider other stopping conditions?
-		printMap();
 		for(int i = 0; i < _it_num; i ++){
 			for(int j = 0; j < _colony.length; j ++){
 				//System.out.println("colony member: "+ j);
@@ -117,7 +133,18 @@ public class AntColonyClusterer extends Clusterer
 			}
 			
 		}
-		printMap();
+		extractClusters();
+        // Build a format string based on print parameters
+        String outputString = String.format("Run %d: ", _it_num);
+
+        if (_printIntraClusterDistance)
+            outputString = outputString.concat(String.format("Average distance in clusters: %f, ", this.evaluateCluster()));
+        if (_printInterClusterDistance)
+            outputString = outputString.concat(String.format("Average distance between clusters: %f, ", this.averageDistanceBetweenCenters()));
+        if (_printDaviesBouldinIndex)
+            outputString = outputString.concat(String.format("Davies-Bouldin index: %f, ", this.daviesBouldinIndex()));
+
+        System.out.println(outputString);
     }
     /**
      * Place the data vectors randomly on the grid
@@ -158,6 +185,47 @@ public class AntColonyClusterer extends Clusterer
     		score = 0;
     	}
     	return score;
+    }
+    private void extractClusters(){
+    	List<AntCluster> currentClusters = new ArrayList<AntCluster>();
+    	_clusters = new LinkedList<Cluster>();
+    	
+    	//create a cluster from every point on the graph
+    	for(int i = 0 ; i < _grid.length; i++){
+    		for(int j = 0; j < _grid[i].length; j ++){
+    			if(_grid[i][j]!=null){
+    				currentClusters.add(new AntCluster(new AntGridPoint(_grid[i][j], i , j)));
+    			}
+    		}
+    	}
+    	int closestClusterIndex = 0 ;
+    	double closestClusterDistance;
+    	double  ccDistance; //min cluster distance for current cluster
+    	System.out.println("Removing ACO clusters, this takes a while.");
+    	while(currentClusters.size() > _numClusters){
+    		//find the closets cluster for each cluster.
+    		closestClusterDistance =-1;//reinitialize for each cluster reduction
+    		
+    		for(int i =0; i < currentClusters.size(); i ++){
+    			ccDistance = currentClusters.get(i).findClosestCluster(currentClusters, i);
+    			if(closestClusterDistance < ccDistance || closestClusterDistance==-1){
+    				closestClusterDistance = ccDistance;
+    				closestClusterIndex = i;
+    			}
+    		}
+    		//combine the clusters with the closest points
+    		currentClusters.get(closestClusterIndex).joinCluster(
+    				currentClusters.remove(currentClusters.get(closestClusterIndex).getClosestClusterIndex()));
+    	}
+    	System.out.println("ACO clusters formed!");
+    	for(int i = 0 ; i < _numClusters; i ++){
+    		Cluster newCluster = new Cluster();
+    		for(int j = 0; j < currentClusters.get(i).getMembers().size(); j ++){
+    			newCluster.addPoint(currentClusters.get(i).getMembers().get(j).getDataPoint());
+    		}
+    		newCluster.recalculateCenter();
+    		_clusters.add(newCluster);
+    	}
     }
     private void printMap(){
     	for(int i =0; i < _grid.length; i ++){

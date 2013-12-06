@@ -46,8 +46,8 @@ public class TunableParameterService
     private TunableParameterService()
     {
         // Properties will be initialized in here
-        _clusteringAlgorithm = ClusteringAlgorithm.KMeans;
-        _dataSet = DataSetSource.Musk;
+        _clusteringAlgorithm = ClusteringAlgorithm.AntColony;
+        _dataSet = DataSetSource.BreastCancer;
         _stopCondition = StopCondition.Iterations;
         _numIterations = 300;
         _numIterationsToConverge = 2;
@@ -62,24 +62,24 @@ public class TunableParameterService
         _networkLearningRate = 0.15;
         
         // ACO parameters
-        _it_num= 200; //number of iterations
+        _it_num= 2000; //number of iterations
     	//size of grid
-    	 _x_size = 100;
-    	 _y_size = 100 ;
-    	 _ant_num= 30;//number of ants
+    	 _x_size = 35;
+    	 _y_size = 35 ;
+    	 _ant_num= 100;//number of ants
     	 _n_patch = 3; //ant visibility (always odd)
     	//Dissimilarity measures 
-    	_gamma = 2;// small --> many clusters, big--> few poorly related clusters 
-    	_gamma_1 =4;
-    	_gamma_2 =4;
+    	_gamma = (float).5;// small --> many clusters, big--> few poorly related clusters 
+    	_gamma_1 =(float).9;
+    	_gamma_2 =(float) .8;
     	
     	
     	
     	// PSO parameters
-    	_n_particle = 10;
-    	_intertia = .8;
+    	_n_particle = 50;
+    	_intertia = .7;
     	_phi_pbest= .01;
-    	_phi_gbest = .9;
+    	_phi_gbest = 1.2;
     }
 
     // Gets the singleton instance of this class
