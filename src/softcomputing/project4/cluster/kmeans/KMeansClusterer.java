@@ -4,6 +4,7 @@ import softcomputing.project4.cluster.Cluster;
 import softcomputing.project4.cluster.Clusterer;
 import softcomputing.project4.data.DataPoint;
 import softcomputing.project4.enums.StopCondition;
+import softcomputing.project4.services.CsvPrinterService;
 import softcomputing.project4.services.DataSetInformationService;
 import softcomputing.project4.services.TunableParameterService;
 
@@ -23,6 +24,8 @@ public class KMeansClusterer extends Clusterer
     private final boolean _printIntraClusterDistance;
     private final boolean _printInterClusterDistance;
     private final boolean _printDaviesBouldinIndex;
+    private final CsvPrinterService _printer;
+    private final boolean _createOutputCsv;
     private int _numIterationsToConverge;
 
     /**
@@ -30,14 +33,14 @@ public class KMeansClusterer extends Clusterer
      */
     public KMeansClusterer()
     {
-        this(DataSetInformationService.getInstance(), TunableParameterService.getInstance());
+        this(DataSetInformationService.getInstance(), TunableParameterService.getInstance(), CsvPrinterService.getInstance());
     }
 
     /**
      * Constructor that takes services through dependency injection
      * @param dataInfoService
      */
-    public KMeansClusterer(DataSetInformationService dataInfoService, TunableParameterService parameterService)
+    public KMeansClusterer(DataSetInformationService dataInfoService, TunableParameterService parameterService, CsvPrinterService printer)
     {
         _numClusters = dataInfoService.getNumOutputs();
         _numFeatures = dataInfoService.getNumInputs();
@@ -48,6 +51,9 @@ public class KMeansClusterer extends Clusterer
         _printIntraClusterDistance = parameterService.getPrintIntraClusterDistance();
         _printInterClusterDistance = parameterService.getPrintInterClusterDistance();
         _printDaviesBouldinIndex = parameterService.getPrintDaviesBouldinIndex();
+
+        _printer = printer;
+        _createOutputCsv = parameterService.getCreateOutputCsv();
     }
 
     @Override
@@ -119,6 +125,10 @@ public class KMeansClusterer extends Clusterer
                 outputString = outputString.concat(String.format("Davies-Bouldin index: %f, ", this.daviesBouldinIndex()));
 
             System.out.println(outputString);
+
+            // Print output to the csv file
+            if (_createOutputCsv)
+                _printer.writeGraphPoint(i, this.daviesBouldinIndex());
         }
     }
 

@@ -12,6 +12,7 @@ public class DataSetInformationService
     private final int _numInputs;
     private final int _numOutputs;
     private final String _filename;
+    private final String _description;
 
     private DataSetInformationService(TunableParameterService parameterService) throws IllegalArgumentException
     {
@@ -23,51 +24,61 @@ public class DataSetInformationService
                 _numInputs = 30;
                 _numOutputs = 2; // Data set has 2 class labels
                 _filename = "SC_data/breast_cancer_wisconsin/BreastCancerWithoutClassification.csv";
+                _description = "BreastCancer";
                 break;
             case Cardiotocography:
                 _numInputs = 22;
                 _numOutputs = 3; // Data set has 3 class labels
                 _filename = "SC_data/Cardiotocography/CTG_no_class_labels.csv";
+                _description = "Cardiotocography";
                 break;
             case ClimateModel:
                 _numInputs = 18;
                 _numOutputs = 2; // Data set has 2 class labels
                 _filename = "SC_data/ClimateModel/ClimateModel_no_class_labels.csv";
+                _description = "ClimateModel";
                 break;
             case EColi:
                 _numInputs = 7;
                 _numOutputs = 8; // Data set has 8 class labels
                 _filename = "SC_data/Ecoli/Ecoli_no_class_labels.csv";
+                _description = "EColi";
                 break;
             case GlassIdentification:
                 _numInputs = 9;
                 _numOutputs = 10;
                 _filename = "SC_data/GlassIdentification/GlassIDWithoutClassification.csv";
+                _description = "GlassIdentification";
                 break;
             case HillVally:
                 _numInputs = 100;
                 _numOutputs = 2; // Data set has 2 class labels
                 _filename = "SC_data/Hill-Vally Data Set/HillVally_no_class_labels.csv";
+                _description = "HillValley";
                 break;
             case IndianLiver:
                 _numInputs = 10;
                 _numOutputs = 2; // Data set has 2 class labels
                 _filename = "SC_data/IndianLiver/ILPD_no_class_labels.csv";
+                _description = "IndianLiver";
                 break;
             case Ionosphere:
                 _numInputs = 33;
                 _numOutputs = 2; // Data set has 2 class labels
                 _filename = "SC_data/Ionosphere/ionosphere_no_class_labels.csv";
+                _description = "Ionosphere";
                 break;
             case MagicTelescope:
                 _numInputs = 10;
                 _numOutputs = 2; // Data set has 2 class labels
                 _filename = "SC_data/MagicTelescope/MagicTelescope_no_class_labels.csv";
+                _description = "MagicTelescope";
                 break;
             case Musk:
                 _numInputs = 166;
                 _numOutputs = 2; // Data set has 2 class labels
                 _filename = "SC_data/Musk/muskData_no_class_labels.csv";
+                _description = "Musk";
                 break;
             default:
                 throw new IllegalArgumentException("No information available for that data set");
@@ -111,4 +122,6 @@ public class DataSetInformationService
     {
         return _filename;
     }
+
+    public String getDescription() {return _description; }
 }

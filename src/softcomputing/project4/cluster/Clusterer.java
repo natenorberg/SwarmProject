@@ -81,7 +81,7 @@ public abstract class Clusterer
      * LaTeX for equation: DB = \frac{1}{n}\sum_{i=1}^{n} max_{i≠j}(\frac{\sigma_i + \sigma_j}{d(c_i, c_j)})
      * @return DB index
      */
-    protected double daviesBouldinIndex()
+    public double daviesBouldinIndex()
     {
         double sum = 0;
 

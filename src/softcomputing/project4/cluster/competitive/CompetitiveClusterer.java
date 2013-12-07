@@ -4,6 +4,7 @@ import softcomputing.project4.cluster.Cluster;
 import softcomputing.project4.cluster.Clusterer;
 import softcomputing.project4.data.DataPoint;
 import softcomputing.project4.enums.StopCondition;
+import softcomputing.project4.services.CsvPrinterService;
 import softcomputing.project4.services.DataSetInformationService;
 import softcomputing.project4.services.TunableParameterService;
 
@@ -17,6 +18,8 @@ public class CompetitiveClusterer extends Clusterer
 {
     private final StopCondition _stopCondition;
     private final int _numIterationsToConverge;
+    private final boolean _createOutputCsv;
+    private final CsvPrinterService _printer;
     private NeuralNetwork _network;
     private int _numIterations;
     private int _numClusters;
@@ -29,7 +32,7 @@ public class CompetitiveClusterer extends Clusterer
      */
     public CompetitiveClusterer()
     {
-        this(TunableParameterService.getInstance(), DataSetInformationService.getInstance());
+        this(TunableParameterService.getInstance(), DataSetInformationService.getInstance(), CsvPrinterService.getInstance());
     }
 
     /**
@@ -37,7 +40,8 @@ public class CompetitiveClusterer extends Clusterer
      * @param parameterService
      * @param dataSetInformationService
      */
-    public CompetitiveClusterer(TunableParameterService parameterService, DataSetInformationService dataSetInformationService)
+    public CompetitiveClusterer(TunableParameterService parameterService,
+                                DataSetInformationService dataSetInformationService, CsvPrinterService printer)
     {
         int numInputs = dataSetInformationService.getNumInputs();
         _numClusters = dataSetInformationService.getNumOutputs();
@@ -50,6 +54,9 @@ public class CompetitiveClusterer extends Clusterer
         _printIntraClusterDistance = parameterService.getPrintIntraClusterDistance();
         _printInterClusterDistance = parameterService.getPrintInterClusterDistance();
         _printDaviesBouldinIndex = parameterService.getPrintDaviesBouldinIndex();
+
+        _createOutputCsv = parameterService.getCreateOutputCsv();
+        _printer = printer;
     }
 
     @Override
@@ -107,6 +114,10 @@ public class CompetitiveClusterer extends Clusterer
                 outputString = outputString.concat(String.format("Davies-Bouldin index: %f, ", this.daviesBouldinIndex()));
 
             System.out.println(outputString);
+
+            // Print output to the csv file
+            if (_createOutputCsv)
+                _printer.writeGraphPoint(i, this.daviesBouldinIndex());
         }
     }
 
