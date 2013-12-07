@@ -29,6 +29,8 @@ public class AntColonyClusterer extends Clusterer
 	int _ant_num;
 	//ant visibility (always odd?)
 	int n_patch; 
+	double _visibility;
+	int _finalVisibility;
 	//Dissimilarity measures 
 	float gamma;// small --> many clusters, big--> few poorly related clusters 
 	float gamma_1;
@@ -53,7 +55,7 @@ public class AntColonyClusterer extends Clusterer
     	//number of ants
     	_ant_num = parameterService.getAntNum();
     	//ant visibility (always odd?)
-    	n_patch= parameterService.getAntVisibility(); 
+    	_finalVisibility= parameterService.getAntVisibility()+1; 
     	//Dissimilarity measures 
     	gamma =parameterService.getGamma();// small --> many clusters, big--> few poorly related clusters 
     	gamma_1 =parameterService.getGamma1();
@@ -89,6 +91,9 @@ public class AntColonyClusterer extends Clusterer
 		int new_y;
 		//consider other stopping conditions?
 		for(int i = 0; i < _it_num; i ++){
+			//linearly increase the ants field of perception
+			_visibility= ((double)(1- _finalVisibility)*((double)(_it_num-i)/_it_num))+_finalVisibility;
+			n_patch = ((int)_visibility * 2)+1;
 			for(int j = 0; j < _colony.length; j ++){
 				//System.out.println("colony member: "+ j);
 				//if not burdened and site is occupied
@@ -131,6 +136,8 @@ public class AntColonyClusterer extends Clusterer
 				_colony[j].setY(new_y);
 				
 			}
+			
+			
 			
 		}
 		extractClusters();

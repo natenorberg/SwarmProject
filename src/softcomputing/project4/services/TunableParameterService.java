@@ -26,12 +26,11 @@ public class TunableParameterService
     private final boolean _printDaviesBouldinIndex;
     
     //tunable parameters for ACO
-	private final int _it_num; //number of iterations
 	//size of grid
 	private final int _x_size;
 	private final int _y_size;
 	private final int _ant_num;//number of ants
-	private final int _n_patch; //ant visibility (always odd)
+	private final int _visibility; //ant visibility
 	//Dissimilarity measures 
 	private final float _gamma;// small --> many clusters, big--> few poorly related clusters 
 	private final float _gamma_1;
@@ -42,13 +41,14 @@ public class TunableParameterService
 	private final double _intertia;
 	private final double _phi_pbest;
 	private final double _phi_gbest;
+	private final double _delta;
 
     // Private constructor
     private TunableParameterService()
     {
         // Properties will be initialized in here
-        _clusteringAlgorithm = ClusteringAlgorithm.KMeans;
-        _dataSet = DataSetSource.Musk;
+        _clusteringAlgorithm = ClusteringAlgorithm.PSO;
+        _dataSet = DataSetSource.EColi;
         _stopCondition = StopCondition.Iterations;
         _numIterations = 300;
         _numIterationsToConverge = 2;
@@ -58,31 +58,31 @@ public class TunableParameterService
         _printInterClusterDistance = false;
         _printDaviesBouldinIndex = true;
 
-        _createOutputCsv = true;
+		_createOutputCsv = true;
 
         // Competitive network parameters
         _sigmoidAlpha = 0.5;
         _networkLearningRate = 0.15;
         
         // ACO parameters
-        _it_num= 200; //number of iterations
     	//size of grid
-    	 _x_size = 100;
-    	 _y_size = 100 ;
-    	 _ant_num= 30;//number of ants
-    	 _n_patch = 3; //ant visibility (always odd)
+    	 _x_size = 35;
+    	 _y_size = 35 ;
+    	 _ant_num= 100;//number of ants
+    	 _visibility = 2; //final ant visibility 
     	//Dissimilarity measures 
-    	_gamma = 2;// small --> many clusters, big--> few poorly related clusters 
-    	_gamma_1 =4;
-    	_gamma_2 =4;
+    	_gamma = (float).5;// small --> many clusters, big--> few poorly related clusters 
+    	_gamma_1 =(float).7;
+    	_gamma_2 =(float) .8;
     	
     	
     	
     	// PSO parameters
     	_n_particle = 10;
-    	_intertia = .8;
-    	_phi_pbest= .01;
-    	_phi_gbest = .9;
+    	_intertia = 5;//randomized
+    	_phi_pbest= .4;
+    	_phi_gbest = 1;
+    	_delta = .3;//defines vMax for clamping
     }
 
     // Gets the singleton instance of this class
@@ -125,7 +125,7 @@ public class TunableParameterService
     public boolean getPrintInterClusterDistance() { return _printInterClusterDistance; }
     public boolean getPrintDaviesBouldinIndex() { return _printDaviesBouldinIndex; }
 
-    public boolean getCreateOutputCsv() { return _createOutputCsv; }
+	public boolean getCreateOutputCsv() { return _createOutputCsv; }
 
     // Gets the alpha value used to stretch out sigmoid functions
     public double getSigmoidAlpha()
@@ -140,10 +140,6 @@ public class TunableParameterService
     public double getNetworkLearningRate() {
         return _networkLearningRate;
     }
-
-    public int getIterationNum(){
-    	return _it_num;
-    }
     public int getXSize(){
     	return _x_size;
     }
@@ -154,7 +150,7 @@ public class TunableParameterService
     	return _ant_num;
     }
     public int getAntVisibility(){
-    	return _n_patch;
+    	return _visibility;
     }
     public float getGamma(){
     	return _gamma;
@@ -176,5 +172,8 @@ public class TunableParameterService
     }
     public double getPhiGbest(){
     	return _phi_gbest;
+    }
+    public double getDelta(){
+    	return _delta;
     }
 }

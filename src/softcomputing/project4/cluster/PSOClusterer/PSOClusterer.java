@@ -62,6 +62,7 @@ public class PSOClusterer extends Clusterer
 				swarm[j].clusterDataPoints(dataSet);
 				//measure fitness of clusters
 				currentFitness = swarm[j].calculateFitness(dataSet);
+				//System.out.println("fitness: "+ currentFitness);
 				//update global best fitness
 				if(currentFitness< bestFitness || bestFitness ==-1 ){
 					bestFitness = currentFitness;
@@ -70,7 +71,7 @@ public class PSOClusterer extends Clusterer
 					globalBest = swarm[j].getCentroidsCopy();
 				}
 				//update the cluster centroids
-				swarm[j].updateCentroids(globalBest);
+				swarm[j].updateCentroids(globalBest, changed,i);
 			}		
 			extractClusters(globalBest, dataSet);
 			if(changed){

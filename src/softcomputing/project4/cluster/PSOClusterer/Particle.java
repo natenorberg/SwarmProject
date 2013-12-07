@@ -1,6 +1,7 @@
 package softcomputing.project4.cluster.PSOClusterer;
 
 import java.util.Arrays;
+
 import softcomputing.project4.services.TunableParameterService;
 import softcomputing.project4.cluster.Clusterer;
 import softcomputing.project4.data.DataPoint;
@@ -12,7 +13,11 @@ public class Particle {
 	
 	double _phi_pbest = .2; //used in velocity update, adjust range of possible change for personal best
 	double _phi_gbest = .2; //used in velocity update, adjust range of possible change for global best
-	
+	double _delta = 0; //used to define vMax between 0 and 1.
+	double _inDev = 3;
+	double _gamma = 1;
+	double _vMax;
+	int _iterations;
 
 	double[][] _centroids; 
 	double[][] _personal_best; //best centroid values yet for this particle
@@ -34,11 +39,16 @@ public class Particle {
 		_intertia = parameterService.getintertia(); //intertia of particles
 		_phi_pbest = parameterService.getPhiPbest();
 		_phi_gbest =parameterService.getPhiGbest();
-		
+		_delta = parameterService.getDelta();
+		_iterations = parameterService.getNumberOfIterations();
+		_vMax = _delta;  //all weights have been normalized
 		
 		//initialize centroids as random members of the population. 
 		for(int i = 0 ; i < _centroids.length; i ++){
-			_centroids[i] = Arrays.copyOf(dataSet[(int)(Math.random()*dataSet.length)].getData(), dataSet[(int)(Math.random()*dataSet.length)].getData().length);
+			//_centroids[i] = Arrays.copyOf(dataSet[(int)(Math.random()*dataSet.length)].getData(), dataSet[(int)(Math.random()*dataSet.length)].getData().length);
+			for(int j = 0; j < _centroids[i].length; j ++){
+				_centroids[i][j] = (Math.random()/2)-(1/4)+(1/2);
+			}
 		}
 	}
 	/**
@@ -85,7 +95,7 @@ public class Particle {
 			}
 			clusterfitness = clusterfitness/members;
 			if(members ==0){
-				clusterfitness =10;// big penalty for having empty clusters
+				clusterfitness =1;// big penalty for having empty clusters
 			}
 			fitness += clusterfitness;
 		}
@@ -105,20 +115,71 @@ public class Particle {
 	 * updates the centroids 
 	 * @param global_best
 	 */
-	public void updateCentroids(double[][] global_best){
+	public void updateCentroids(double[][] global_best, boolean newBest, int iter_count){
+
+		//velocity update
+		//calculate vMax
+		if(newBest){
+			_vMax = _gamma *_vMax; //range for all dimensions is one since they are normalized
+			
+		}
+		// anneal gamma
+		_gamma = ((1-(0.01))*(((double)(_iterations - iter_count))/_iterations))+(0.01);
+		
+		//*/
+		_intertia = randomGaussian(.72,1.2 ); //.72,1.2
+		//_intertia = (.8-(0.4))*((_iterations - iter_count)/_iterations)+(0.4);
+		double vPrime =0;
+		
+		for(int i = 0 ; i < _velocity.length; i ++){
+			for(int j = 0 ; j < _velocity[i].length; j++){
+				//determine vPrime
+				
+				vPrime = _velocity[i][j]*_intertia + (Math.random()*_phi_pbest)*(_personal_best[i][j]-_centroids[i][j])
+							+(Math.random()*_phi_gbest)*(global_best[i][j]-_centroids[i][j]);
+			
+				//_velocity[i][j]= vMax* Math.tanh((vPrime/vMax));
+				if(vPrime < _vMax){
+					_velocity[i][j] = vPrime;
+				}
+				else{
+					//System.out.println("max v"+ _vMax);
+					_velocity[i][j] = _vMax;
+				}
+				//_velocity[i][j] = vPrime;
+				//velocity[i][j]*_intertia + (Math.random()*_phi_pbest)*(_personal_best[i][j]-_centroids[i][j])
+				//		+(Math.random()*_phi_gbest)*(global_best[i][j]-_centroids[i][j]);
+			}
+		}
 		//state update
 		for(int i = 0 ; i < _centroids.length; i ++){
 			for(int j = 0 ; j < _centroids[i].length; j ++){
-				_centroids[i][j] +=  _velocity[i][j]; 
+				_centroids[i][j] += _velocity[i][j]; 
 			}
 		}
-		//velocity update
-		for(int i = 0 ; i < _velocity.length; i ++){
-			for(int j = 0 ; j < _velocity[i].length; j++){
-				_velocity[i][j]= _velocity[i][j]*_intertia + (Math.random()*_phi_pbest)*(_personal_best[i][j]-_centroids[i][j])
-						+(Math.random()*_phi_gbest)*(global_best[i][j]-_centroids[i][j]);
-			}
+	}
+	
+	/**
+	 * Generates a random number from a gaussian distribution
+	 * @param mean - mean value for distribution
+	 * @param stdeviation - standard deviation for the distribution
+	 * @return - a random number
+	 */
+	public static double randomGaussian(double mean, double stdeviation){
+		double out = 0;
+		double r_one = Math.random(); //random number one
+		double r_two = Math.random(); //random number two
+		if(r_one == 0){
+			out = 1;
 		}
+		if(r_two == 0){
+			out = 1;
+		}
+		//Box-Muller Transformation
+		out = Math.sqrt(-2*Math.log(r_one))*(Math.cos(2*Math.PI*r_two));
+		out = out * stdeviation +mean;
+		//System.out.println( out);
+		return out;
 	}
 	/**
 	 * Returns the values of the centroids
