@@ -7,6 +7,7 @@ import java.util.List;
 import softcomputing.project4.cluster.Cluster;
 import softcomputing.project4.cluster.Clusterer;
 import softcomputing.project4.data.DataPoint;
+import softcomputing.project4.services.ConsoleWriterService;
 import softcomputing.project4.services.DataSetInformationService;
 import softcomputing.project4.services.TunableParameterService;
 /**
@@ -14,7 +15,8 @@ import softcomputing.project4.services.TunableParameterService;
  */
 public class AntColonyClusterer extends Clusterer
 {
-	private DataPoint[][] _grid;
+    private final ConsoleWriterService _output;
+    private DataPoint[][] _grid;
 	private Ant[] _colony;
 	
 	
@@ -42,9 +44,10 @@ public class AntColonyClusterer extends Clusterer
     private final boolean _printDaviesBouldinIndex;
 	
     public AntColonyClusterer(){
-    	this(TunableParameterService.getInstance(), DataSetInformationService.getInstance());
+    	this(TunableParameterService.getInstance(), DataSetInformationService.getInstance(), ConsoleWriterService.getInstance());
     }
-    public AntColonyClusterer(TunableParameterService parameterService, DataSetInformationService dataSetInformationService){
+    public AntColonyClusterer(TunableParameterService parameterService, DataSetInformationService dataSetInformationService,
+                              ConsoleWriterService output){
     	
         //tunable parameters
     	//number of iteration
@@ -72,7 +75,7 @@ public class AntColonyClusterer extends Clusterer
         _printInterClusterDistance = parameterService.getPrintInterClusterDistance();
         _printDaviesBouldinIndex = parameterService.getPrintDaviesBouldinIndex();
     	
-    	
+    	_output = output;
     }
 
     public void clusterDataSet(DataPoint[] dataSet){
@@ -95,7 +98,7 @@ public class AntColonyClusterer extends Clusterer
 			_visibility= ((double)(1- _finalVisibility)*((double)(_it_num-i)/_it_num))+_finalVisibility;
 			n_patch = ((int)_visibility * 2)+1;
 			for(int j = 0; j < _colony.length; j ++){
-				//System.out.println("colony member: "+ j);
+				//_output.writeLine("colony member: "+ j);
 				//if not burdened and site is occupied
 				if(_colony[j].getPayload()==null&&_grid[_colony[j].getX()][_colony[j].getY()]!=null){
 					//find local density of vectors
@@ -151,7 +154,7 @@ public class AntColonyClusterer extends Clusterer
         if (_printDaviesBouldinIndex)
             outputString = outputString.concat(String.format("Davies-Bouldin index: %f, ", this.daviesBouldinIndex()));
 
-        System.out.println(outputString);
+        _output.writeLine(outputString);
     }
     /**
      * Place the data vectors randomly on the grid
@@ -208,7 +211,7 @@ public class AntColonyClusterer extends Clusterer
     	int closestClusterIndex = 0 ;
     	double closestClusterDistance;
     	double  ccDistance; //min cluster distance for current cluster
-    	System.out.println("Removing ACO clusters, this takes a while.");
+    	_output.writeLine("Removing ACO clusters, this takes a while.");
     	while(currentClusters.size() > _numClusters){
     		//find the closets cluster for each cluster.
     		closestClusterDistance =-1;//reinitialize for each cluster reduction
@@ -224,7 +227,7 @@ public class AntColonyClusterer extends Clusterer
     		currentClusters.get(closestClusterIndex).joinCluster(
     				currentClusters.remove(currentClusters.get(closestClusterIndex).getClosestClusterIndex()));
     	}
-    	System.out.println("ACO clusters formed!");
+    	_output.writeLine("ACO clusters formed!");
     	for(int i = 0 ; i < _numClusters; i ++){
     		Cluster newCluster = new Cluster();
     		for(int j = 0; j < currentClusters.get(i).getMembers().size(); j ++){
@@ -238,15 +241,15 @@ public class AntColonyClusterer extends Clusterer
     	for(int i =0; i < _grid.length; i ++){
     		for(int j = 0 ; j < _grid[i].length; j++){
     			if(_grid[i][j] != null){
-    				System.out.print("# ");
+    				_output.writeString("# ");
     			}
     			else{
-    				System.out.print("  ");
+    				_output.writeString("  ");
     			}
     		}
-    		System.out.println("|");
+    		_output.writeLine("|");
     	}
-    	System.out.println("done");
+    	_output.writeLine("done");
     }
 
 }

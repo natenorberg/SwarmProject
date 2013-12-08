@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import softcomputing.project4.cluster.Cluster;
 import softcomputing.project4.cluster.Clusterer;
 import softcomputing.project4.data.DataPoint;
+import softcomputing.project4.services.ConsoleWriterService;
 import softcomputing.project4.services.DataSetInformationService;
 import softcomputing.project4.services.TunableParameterService;
 
@@ -13,7 +14,8 @@ import softcomputing.project4.services.TunableParameterService;
  */
 public class PSOClusterer extends Clusterer
 {
-	Particle[] swarm;
+    private final ConsoleWriterService _output;
+    Particle[] swarm;
 	TunableParameterService _myParameterService;
 	int _it_num; //number of iterations
 	int _n_cluster;
@@ -25,9 +27,11 @@ public class PSOClusterer extends Clusterer
     private final boolean _printDaviesBouldinIndex;
 	
     public PSOClusterer(){
-    	this(TunableParameterService.getInstance(), DataSetInformationService.getInstance());
+    	this(TunableParameterService.getInstance(), DataSetInformationService.getInstance(), ConsoleWriterService.getInstance());
     }
-    public PSOClusterer(TunableParameterService parameterService, DataSetInformationService dataSetInformationService){
+    public PSOClusterer(TunableParameterService parameterService,
+                        DataSetInformationService dataSetInformationService,
+                        ConsoleWriterService output){
     	_it_num = parameterService.getNumberOfIterations();//number of iterations
     	_n_cluster = dataSetInformationService.getNumOutputs();//number of clusters
     	_n_particle = parameterService.getParticleNum();// number of particles
@@ -38,7 +42,8 @@ public class PSOClusterer extends Clusterer
         _printIntraClusterDistance = parameterService.getPrintIntraClusterDistance();
         _printInterClusterDistance = parameterService.getPrintInterClusterDistance();
         _printDaviesBouldinIndex = parameterService.getPrintDaviesBouldinIndex();
-    	
+
+        _output = output;
     }
 
 	public void clusterDataSet(DataPoint[] dataSet)
@@ -62,11 +67,11 @@ public class PSOClusterer extends Clusterer
 				swarm[j].clusterDataPoints(dataSet);
 				//measure fitness of clusters
 				currentFitness = swarm[j].calculateFitness(dataSet);
-				//System.out.println("fitness: "+ currentFitness);
+				//_output.writeLine("fitness: "+ currentFitness);
 				//update global best fitness
 				if(currentFitness< bestFitness || bestFitness ==-1 ){
 					bestFitness = currentFitness;
-					System.out.println("new global best: "+bestFitness);
+					_output.writeLine("new global best: "+bestFitness);
 					changed = true;
 					globalBest = swarm[j].getCentroidsCopy();
 				}
@@ -84,7 +89,7 @@ public class PSOClusterer extends Clusterer
 		        if (_printDaviesBouldinIndex)
 		            outputString = outputString.concat(String.format("Davies-Bouldin index: %f, ", this.daviesBouldinIndex()));
 		
-		        System.out.println(outputString);
+		        _output.writeLine(outputString);
 		        changed = false;
 			}
 		}

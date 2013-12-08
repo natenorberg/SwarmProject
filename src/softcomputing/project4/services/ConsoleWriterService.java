@@ -51,6 +51,18 @@ public class ConsoleWriterService
     }
 
     /**
+     * Writes a string to the console and (optionally) to the output file
+     * @param string
+     */
+    public void writeString(String string)
+    {
+        System.out.print(string);
+
+        if (_saveAsSampleRun)
+            _output.print(string);
+    }
+
+    /**
      * Gets the singleton instance of this service
      * @return instance
      */
