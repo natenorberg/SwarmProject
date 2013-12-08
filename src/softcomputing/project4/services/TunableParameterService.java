@@ -11,6 +11,7 @@ import softcomputing.project4.enums.StopCondition;
 public class TunableParameterService
 {
     private static TunableParameterService _instance;
+    private final int _numRuns;
     private final DataSetSource _dataSet;
     private final double _sigmoidAlpha;
     private final int _numIterations;
@@ -47,8 +48,10 @@ public class TunableParameterService
     private TunableParameterService()
     {
         // Properties will be initialized in here
-        _clusteringAlgorithm = ClusteringAlgorithm.KMeans;
+        _clusteringAlgorithm = ClusteringAlgorithm.Competitive;
         _dataSet = DataSetSource.EColi;
+        _numRuns = 20;
+
         _stopCondition = StopCondition.Iterations;
         _numIterations = 300;
         _numIterationsToConverge = 2;
@@ -95,6 +98,9 @@ public class TunableParameterService
         return _instance;
     }
 
+    // Gets the number of runs for the experiment
+    public int getNumRuns() { return _numRuns; }
+
     // Gets the algorithm type used in this run
     public ClusteringAlgorithm getClusteringAlgorithm() {
         return _clusteringAlgorithm;
@@ -125,6 +131,7 @@ public class TunableParameterService
     public boolean getPrintInterClusterDistance() { return _printInterClusterDistance; }
     public boolean getPrintDaviesBouldinIndex() { return _printDaviesBouldinIndex; }
 
+    // Gets whether or not to create output csv files to create graphs
 	public boolean getCreateOutputCsv() { return _createOutputCsv; }
 
     // Gets the alpha value used to stretch out sigmoid functions

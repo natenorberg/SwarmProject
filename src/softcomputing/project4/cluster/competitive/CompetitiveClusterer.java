@@ -22,6 +22,7 @@ public class CompetitiveClusterer extends Clusterer
     private final CsvPrinterService _printer;
     private NeuralNetwork _network;
     private int _numIterations;
+    private int _numInputs;
     private int _numClusters;
     private final boolean _printIntraClusterDistance;
     private final boolean _printInterClusterDistance;
@@ -43,9 +44,8 @@ public class CompetitiveClusterer extends Clusterer
     public CompetitiveClusterer(TunableParameterService parameterService,
                                 DataSetInformationService dataSetInformationService, CsvPrinterService printer)
     {
-        int numInputs = dataSetInformationService.getNumInputs();
+        _numInputs = dataSetInformationService.getNumInputs();
         _numClusters = dataSetInformationService.getNumOutputs();
-        _network = new NeuralNetwork(numInputs, _numClusters);
 
         _stopCondition = parameterService.getStopCondition();
         _numIterations = parameterService.getNumberOfIterations();
@@ -62,6 +62,9 @@ public class CompetitiveClusterer extends Clusterer
     @Override
     public void clusterDataSet(DataPoint[] dataSet)
     {
+        //Create a new network
+        _network = new NeuralNetwork(_numInputs, _numClusters);
+
         // Initialize empty clusters
         _clusters = new LinkedList<Cluster>();
         for (int i=0; i<_numClusters; i++) {
@@ -117,7 +120,7 @@ public class CompetitiveClusterer extends Clusterer
 
             // Print output to csv file
             if (_createOutputCsv) {
-                _printer.writeGraphPoint(i, this.daviesBouldinIndex());
+                _printer.logGraphPoint(i, this.daviesBouldinIndex());
             }
         }
     }

@@ -129,7 +129,7 @@ public class KMeansClusterer extends Clusterer
 
             // Write the output to the csv file to make a nice graph
             if (_createOutputCsv) {
-                _printer.writeGraphPoint(i, this.daviesBouldinIndex());
+                _printer.logGraphPoint(i, this.daviesBouldinIndex());
             }
         }
     }
