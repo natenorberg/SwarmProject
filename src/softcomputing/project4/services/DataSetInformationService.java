@@ -46,7 +46,7 @@ public class DataSetInformationService
                 break;
             case GlassIdentification:
                 _numInputs = 9;
-                _numOutputs = 10;
+                _numOutputs = 7;
                 _filename = "SC_data/GlassIdentification/GlassIDWithoutClassification.csv";
                 _description = "GlassIdentification";
                 break;
@@ -80,6 +80,17 @@ public class DataSetInformationService
                 _filename = "SC_data/Musk/muskData_no_class_labels.csv";
                 _description = "Musk";
                 break;
+            case Knowledge:
+            	_numInputs = 5;
+            	_numOutputs = 5;
+            	_filename = "SC_data/Knowledge/knowledge_no_class_lables.csv";
+            	_description ="Knowledge";
+            	break;
+            case Fertility:
+            	_numInputs = 9;
+            	_numOutputs = 2;
+            	_filename = "SC_data/Fertility/fertility_no_class_lables.csv";
+            	_description = "Fertility";
             default:
                 throw new IllegalArgumentException("No information available for that data set");
         }

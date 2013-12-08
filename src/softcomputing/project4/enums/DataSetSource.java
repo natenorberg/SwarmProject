@@ -14,5 +14,7 @@ public enum DataSetSource
     IndianLiver,
     Ionosphere,
     MagicTelescope,
-    Musk
+    Musk, 
+    Knowledge,
+    Fertility
 }
