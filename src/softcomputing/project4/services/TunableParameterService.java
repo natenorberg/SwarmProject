@@ -25,6 +25,7 @@ public class TunableParameterService
     private final boolean _printIntraClusterDistance;
     private final boolean _printInterClusterDistance;
     private final boolean _printDaviesBouldinIndex;
+    private final boolean _saveAsSampleRun;
     
     //tunable parameters for ACO
 	//size of grid
@@ -48,7 +49,7 @@ public class TunableParameterService
     private TunableParameterService()
     {
         // Properties will be initialized in here
-        _clusteringAlgorithm = ClusteringAlgorithm.Competitive;
+        _clusteringAlgorithm = ClusteringAlgorithm.KMeans;
         _dataSet = DataSetSource.EColi;
         _numRuns = 20;
 
@@ -60,6 +61,7 @@ public class TunableParameterService
         _printIntraClusterDistance = false;
         _printInterClusterDistance = false;
         _printDaviesBouldinIndex = true;
+        _saveAsSampleRun = true;
 
 		_createOutputCsv = true;
 
@@ -130,6 +132,7 @@ public class TunableParameterService
     public boolean getPrintIntraClusterDistance() { return _printIntraClusterDistance; }
     public boolean getPrintInterClusterDistance() { return _printInterClusterDistance; }
     public boolean getPrintDaviesBouldinIndex() { return _printDaviesBouldinIndex; }
+    public boolean getSaveAsSampleRun() { return  _saveAsSampleRun; }
 
     // Gets whether or not to create output csv files to create graphs
 	public boolean getCreateOutputCsv() { return _createOutputCsv; }

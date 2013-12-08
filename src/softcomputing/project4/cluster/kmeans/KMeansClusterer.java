@@ -4,6 +4,7 @@ import softcomputing.project4.cluster.Cluster;
 import softcomputing.project4.cluster.Clusterer;
 import softcomputing.project4.data.DataPoint;
 import softcomputing.project4.enums.StopCondition;
+import softcomputing.project4.services.ConsoleWriterService;
 import softcomputing.project4.services.CsvPrinterService;
 import softcomputing.project4.services.DataSetInformationService;
 import softcomputing.project4.services.TunableParameterService;
@@ -26,6 +27,7 @@ public class KMeansClusterer extends Clusterer
     private final boolean _printDaviesBouldinIndex;
     private final boolean _createOutputCsv;
     private final CsvPrinterService _printer;
+    private final ConsoleWriterService _output;
     private int _numIterationsToConverge;
 
     /**
@@ -33,7 +35,8 @@ public class KMeansClusterer extends Clusterer
      */
     public KMeansClusterer()
     {
-        this(DataSetInformationService.getInstance(), TunableParameterService.getInstance(), CsvPrinterService.getInstance());
+        this(DataSetInformationService.getInstance(), TunableParameterService.getInstance(),
+                CsvPrinterService.getInstance(), ConsoleWriterService.getInstance());
     }
 
     /**
@@ -41,7 +44,7 @@ public class KMeansClusterer extends Clusterer
      * @param dataInfoService
      */
     public KMeansClusterer(DataSetInformationService dataInfoService,
-                           TunableParameterService parameterService, CsvPrinterService printer)
+                           TunableParameterService parameterService, CsvPrinterService printer, ConsoleWriterService output)
     {
         _numClusters = dataInfoService.getNumOutputs();
         _numFeatures = dataInfoService.getNumInputs();
@@ -55,6 +58,7 @@ public class KMeansClusterer extends Clusterer
 
         _createOutputCsv = parameterService.getCreateOutputCsv();
         _printer = printer;
+        _output = output;
     }
 
     @Override
@@ -125,7 +129,7 @@ public class KMeansClusterer extends Clusterer
             if (_printDaviesBouldinIndex)
                 outputString = outputString.concat(String.format("Davies-Bouldin index: %f, ", this.daviesBouldinIndex()));
 
-            System.out.println(outputString);
+            _output.writeLine(outputString);
 
             // Write the output to the csv file to make a nice graph
             if (_createOutputCsv) {
