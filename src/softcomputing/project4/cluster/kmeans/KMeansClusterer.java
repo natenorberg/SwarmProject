@@ -10,7 +10,6 @@ import softcomputing.project4.services.DataSetInformationService;
 import softcomputing.project4.services.TunableParameterService;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -46,12 +45,13 @@ public class KMeansClusterer extends Clusterer
     public KMeansClusterer(DataSetInformationService dataInfoService,
                            TunableParameterService parameterService, CsvPrinterService printer, ConsoleWriterService output)
     {
+        // Read in parameters
         _numClusters = dataInfoService.getNumOutputs();
         _numFeatures = dataInfoService.getNumInputs();
         _stopCondition = parameterService.getStopCondition();
         _numIterations = parameterService.getNumberOfIterations();
         _numIterationsToConverge = parameterService.getNumIterationsToConverge();
-
+        // Read in print parameters
         _printIntraClusterDistance = parameterService.getPrintIntraClusterDistance();
         _printInterClusterDistance = parameterService.getPrintInterClusterDistance();
         _printDaviesBouldinIndex = parameterService.getPrintDaviesBouldinIndex();

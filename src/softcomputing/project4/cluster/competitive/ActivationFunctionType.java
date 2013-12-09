@@ -5,6 +5,6 @@ package softcomputing.project4.cluster.competitive;
  */
 public enum ActivationFunctionType
 {
-    Sigmoid,
-    Linear
+    Sigmoid, // Use the logistic function
+    Linear // Use a linear function
 }

@@ -10,7 +10,6 @@ import softcomputing.project4.services.DataSetInformationService;
 import softcomputing.project4.services.TunableParameterService;
 
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Uses a competitive learning neural net to cluster the data set
@@ -77,7 +76,7 @@ public class CompetitiveClusterer extends Clusterer
             _clusters.add(new Cluster());
         }
 
-        int convergedRuns = 0;
+        int convergedRuns = 0; // Initialize this counter to zero
         for (int i=0; checkStopConditions(i, convergedRuns); i++)
         {
             convergedRuns++; // This will be set back to 0 if we haven't actually converged
@@ -115,12 +114,14 @@ public class CompetitiveClusterer extends Clusterer
             // Build a format string based on print parameters
             String outputString = String.format("Run %d: ", i);
 
+            // Builds a string for the run output based on the configs set
             if (_printIntraClusterDistance)
                 outputString = outputString.concat(String.format("Average distance in clusters: %f, ", this.evaluateCluster()));
             if (_printInterClusterDistance)
                 outputString = outputString.concat(String.format("Average distance between clusters: %f, ", this.averageDistanceBetweenCenters()));
             if (_printDaviesBouldinIndex)
                 outputString = outputString.concat(String.format("Davies-Bouldin index: %f, ", this.daviesBouldinIndex()));
+
 
             _output.writeLine(outputString);
 
