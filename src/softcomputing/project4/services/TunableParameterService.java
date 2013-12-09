@@ -49,8 +49,8 @@ public class TunableParameterService
     private TunableParameterService()
     {
         // Properties will be initialized in here
-        _clusteringAlgorithm = ClusteringAlgorithm.KMeans;
-        _dataSet = DataSetSource.EColi;
+        _clusteringAlgorithm = ClusteringAlgorithm.Competitive;
+        _dataSet = DataSetSource.Cardiotocography;
         _numRuns = 20;
 
         _stopCondition = StopCondition.Iterations;
