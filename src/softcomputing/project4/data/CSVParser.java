@@ -74,7 +74,12 @@ public class CSVParser implements Parser {
 		}
 		return output;
 	}
-	// normalize the data
+	/**
+	 * normalizes all of the dimensions of the input dataset 
+	 * to the range 0 to 1
+	 * @param input -unnormalized dataset
+	 * @return	- normalized dataset
+	 */
 	public DataPoint[] normalizeData(DataPoint[] input){
 		DataPoint[] normalized = new DataPoint[input.length];
 		double high;
@@ -82,7 +87,7 @@ public class CSVParser implements Parser {
 		for(int i = 0; i < input[0].getData().length;i ++){ //for each dimension of the data points
 			low = 0;
 			high = 0; 
-			for(int j = 0 ; j < input.length; j ++){ //find the min and max values 
+			for(int j = 0 ; j < input.length; j ++){ //find the min and max values over all datavectors
 				//find min
 				if(low > input[j].getData()[i] || j ==0){
 					low = input[j].getData()[i];
@@ -92,12 +97,13 @@ public class CSVParser implements Parser {
 					high = input[j].getData()[i];
 				}
 			}
-			for(int j = 0 ; j < input.length; j ++){
+			for(int j = 0 ; j < input.length; j ++){ //Normalize that dimension for all datavectors
 				//normalize within range 0 to 1
 				input[j].getData()[i] = (input[j].getData()[i] - low)/(high-low);
 			}
 			
 		}
+		//copy over normalized data
 		for(int i = 0 ; i < normalized.length; i ++){
 			normalized[i] =input[i];
 		}

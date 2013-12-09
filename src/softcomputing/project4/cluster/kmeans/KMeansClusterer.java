@@ -120,7 +120,7 @@ public class KMeansClusterer extends Clusterer
 
 
             // Build a format string based on print parameters
-            String outputString = String.format("Run %d: ", i);
+            String outputString = String.format("K-Means, iteration %d: ", i);
 
             if (_printIntraClusterDistance)
                 outputString = outputString.concat(String.format("Average distance in clusters: %f, ", this.evaluateCluster()));

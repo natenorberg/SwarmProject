@@ -36,18 +36,19 @@ public class Particle {
 		_velocity = new double[NumberOfCentroids][centroidLength];
 		_personal_best =new double[NumberOfCentroids][centroidLength];
 		_data_assignments = new int[dataSet.length];
+		
+		//get tunable parameters
 		_intertia = parameterService.getintertia(); //intertia of particles
 		_phi_pbest = parameterService.getPhiPbest();
 		_phi_gbest =parameterService.getPhiGbest();
 		_delta = parameterService.getDelta();
 		_iterations = parameterService.getNumberOfIterations();
-		_vMax = _delta;  //all weights have been normalized
+		_vMax = _delta;  //all weights have been normalized don't need to multiply by difference between high and low
 		
-		//initialize centroids as random members of the population. 
+		//initialize centroids with random numbers
 		for(int i = 0 ; i < _centroids.length; i ++){
-			//_centroids[i] = Arrays.copyOf(dataSet[(int)(Math.random()*dataSet.length)].getData(), dataSet[(int)(Math.random()*dataSet.length)].getData().length);
 			for(int j = 0; j < _centroids[i].length; j ++){
-				_centroids[i][j] = (Math.random()/2)-(1/4)+(1/2);
+				_centroids[i][j] = (Math.random());
 			}
 		}
 	}
@@ -88,14 +89,15 @@ public class Particle {
 			members = 0;
 			clusterfitness = 0;
 			for(int j = 0; j < _data_assignments.length; j++){ //for each data point
-				if(_data_assignments[j] == i){ //if the data point belong to that centroid
-					members++;
+				if(_data_assignments[j] == i){ //if the data point belongs to that centroid
+					members++; //ad to member count
+					//add member distance to cluster fitness
 					clusterfitness += Clusterer.euclideanDistance(_centroids[i],dataSet[j].getData());
 				}
 			}
 			clusterfitness = clusterfitness/members;
 			if(members ==0){
-				clusterfitness =1;// big penalty for having empty clusters
+				clusterfitness =1;// penalty for having empty clusters
 			}
 			fitness += clusterfitness;
 		}
@@ -112,46 +114,38 @@ public class Particle {
 		return fitness;
 	}
 	/**
-	 * updates the centroids 
+	 * Update the centroids 
 	 * @param global_best
 	 */
-	public void updateCentroids(double[][] global_best, boolean newBest, int iter_count){
-
-		//velocity update
-		//calculate vMax
-		if(newBest){
+	public void updateCentroids(double[][] global_best, int noChange, int iter_count){
+		//decrease vMax id no change after 10 iterations
+		if(noChange > 10){
 			_vMax = _gamma *_vMax; //range for all dimensions is one since they are normalized
 			
 		}
 		// anneal gamma
 		_gamma = ((1-(0.01))*(((double)(_iterations - iter_count))/_iterations))+(0.01);
 		
-		//*/
+		//update intertia
 		_intertia = randomGaussian(.72,1.2 ); //.72,1.2
-		//_intertia = (.8-(0.4))*((_iterations - iter_count)/_iterations)+(0.4);
-		double vPrime =0;
 		
+		//velocity update
+		double vPrime =0; //potential new velocity
 		for(int i = 0 ; i < _velocity.length; i ++){
 			for(int j = 0 ; j < _velocity[i].length; j++){
 				//determine vPrime
-				
 				vPrime = _velocity[i][j]*_intertia + (Math.random()*_phi_pbest)*(_personal_best[i][j]-_centroids[i][j])
 							+(Math.random()*_phi_gbest)*(global_best[i][j]-_centroids[i][j]);
-			
-				//_velocity[i][j]= vMax* Math.tanh((vPrime/vMax));
+				//check if vPrime within velocity clamp
 				if(vPrime < _vMax){
 					_velocity[i][j] = vPrime;
 				}
 				else{
-					//System.out.println("max v"+ _vMax);
 					_velocity[i][j] = _vMax;
 				}
-				//_velocity[i][j] = vPrime;
-				//velocity[i][j]*_intertia + (Math.random()*_phi_pbest)*(_personal_best[i][j]-_centroids[i][j])
-				//		+(Math.random()*_phi_gbest)*(global_best[i][j]-_centroids[i][j]);
 			}
 		}
-		//state update
+		//state update of centroids
 		for(int i = 0 ; i < _centroids.length; i ++){
 			for(int j = 0 ; j < _centroids[i].length; j ++){
 				_centroids[i][j] += _velocity[i][j]; 
@@ -163,7 +157,7 @@ public class Particle {
 	 * Generates a random number from a gaussian distribution
 	 * @param mean - mean value for distribution
 	 * @param stdeviation - standard deviation for the distribution
-	 * @return - a random number
+	 * @return - a random normally distributed number
 	 */
 	public static double randomGaussian(double mean, double stdeviation){
 		double out = 0;

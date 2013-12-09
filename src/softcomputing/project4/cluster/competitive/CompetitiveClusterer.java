@@ -112,7 +112,7 @@ public class CompetitiveClusterer extends Clusterer
             }
 
             // Build a format string based on print parameters
-            String outputString = String.format("Run %d: ", i);
+            String outputString = String.format("Competitive Learning, iteration %d: ", i);
 
             // Builds a string for the run output based on the configs set
             if (_printIntraClusterDistance)

@@ -49,17 +49,17 @@ public class TunableParameterService
     private TunableParameterService()
     {
         // Properties will be initialized in here
-        _clusteringAlgorithm = ClusteringAlgorithm.Competitive;
-        _dataSet = DataSetSource.Cardiotocography;
-        _numRuns = 20;
+        _clusteringAlgorithm = ClusteringAlgorithm.AntColony;
+        _dataSet = DataSetSource.BreastCancer;
+        _numRuns = 1;
 
         _stopCondition = StopCondition.Iterations;
         _numIterations = 300;
         _numIterationsToConverge = 2;
 
         // Print parameters
-        _printIntraClusterDistance = false;
-        _printInterClusterDistance = false;
+        _printIntraClusterDistance = true;
+        _printInterClusterDistance = true;
         _printDaviesBouldinIndex = true;
         _saveAsSampleRun = true;
 
@@ -85,8 +85,8 @@ public class TunableParameterService
     	// PSO parameters
     	_n_particle = 10;
     	_intertia = 5;//randomized
-    	_phi_pbest= .4;
-    	_phi_gbest = 1;
+    	_phi_pbest= .06;
+    	_phi_gbest = .7;
     	_delta = .3;//defines vMax for clamping
     }
 
@@ -150,6 +150,7 @@ public class TunableParameterService
     public double getNetworkLearningRate() {
         return _networkLearningRate;
     }
+    //Getters for ACO
     public int getXSize(){
     	return _x_size;
     }
@@ -171,6 +172,7 @@ public class TunableParameterService
     public float getGamma2(){
     	return _gamma_2;
     }
+    //Getters for PSO
     public int getParticleNum(){
     	return _n_particle;
     }

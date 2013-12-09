@@ -43,13 +43,22 @@ public class AntColonyClusterer extends Clusterer
     private final boolean _printInterClusterDistance;
     private final boolean _printDaviesBouldinIndex;
 	
+    /**
+     * Public constructor
+     */
     public AntColonyClusterer(){
     	this(TunableParameterService.getInstance(), DataSetInformationService.getInstance(), ConsoleWriterService.getInstance());
     }
+    /**
+     * Constructor that takes services through dependency injection
+     * @param parameterService
+     * @param dataSetInformationService
+     * @param output
+     */
     public AntColonyClusterer(TunableParameterService parameterService, DataSetInformationService dataSetInformationService,
                               ConsoleWriterService output){
     	
-        //tunable parameters
+        //read in tunable parameters
     	//number of iteration
     	_it_num = parameterService.getNumberOfIterations();
     	//size of grid
@@ -63,21 +72,23 @@ public class AntColonyClusterer extends Clusterer
     	gamma =parameterService.getGamma();// small --> many clusters, big--> few poorly related clusters 
     	gamma_1 =parameterService.getGamma1();
     	gamma_2 =parameterService.getGamma2();
-    	
+    	//number of clusters
     	_numClusters = dataSetInformationService.getNumOutputs();
     	
-
+    	//create the grid and colony
     	_grid = new DataPoint[_x_size][_y_size];
     	_colony = new Ant[_ant_num];
     	
-
+    	//read in print parameters
         _printIntraClusterDistance = parameterService.getPrintIntraClusterDistance();
         _printInterClusterDistance = parameterService.getPrintInterClusterDistance();
         _printDaviesBouldinIndex = parameterService.getPrintDaviesBouldinIndex();
-    	
     	_output = output;
     }
-
+    @Override
+    /**
+     * performs the clustering 
+     */
     public void clusterDataSet(DataPoint[] dataSet){
     	//place each data vector from the data set randomly on the grid
 		populateGrid(dataSet);
@@ -139,22 +150,22 @@ public class AntColonyClusterer extends Clusterer
 				_colony[j].setY(new_y);
 				
 			}
-			
+			extractClusters();
+	        // Build a format string based on print parameters
+	        String outputString = String.format("ACO, iteration %d: ", i);
+
+	        if (_printIntraClusterDistance)
+	            outputString = outputString.concat(String.format("Average distance in clusters: %f, ", this.evaluateCluster()));
+	        if (_printInterClusterDistance)
+	            outputString = outputString.concat(String.format("Average distance between clusters: %f, ", this.averageDistanceBetweenCenters()));
+	        if (_printDaviesBouldinIndex)
+	            outputString = outputString.concat(String.format("Davies-Bouldin index: %f, ", this.daviesBouldinIndex()));
+
+	        _output.writeLine(outputString);
 			
 			
 		}
-		extractClusters();
-        // Build a format string based on print parameters
-        String outputString = String.format("Run %d: ", _it_num);
-
-        if (_printIntraClusterDistance)
-            outputString = outputString.concat(String.format("Average distance in clusters: %f, ", this.evaluateCluster()));
-        if (_printInterClusterDistance)
-            outputString = outputString.concat(String.format("Average distance between clusters: %f, ", this.averageDistanceBetweenCenters()));
-        if (_printDaviesBouldinIndex)
-            outputString = outputString.concat(String.format("Davies-Bouldin index: %f, ", this.daviesBouldinIndex()));
-
-        _output.writeLine(outputString);
+		
     }
     /**
      * Place the data vectors randomly on the grid
@@ -171,7 +182,13 @@ public class AntColonyClusterer extends Clusterer
     		_grid[rand_x][rand_y] = newPoints[i];
     	}
     }
-    // find the local density of simular data points
+    /**
+     * Find the local density of similar points surrounding the ant
+     * @param a_point -point being examined by ant
+     * @param x_loc -x location of point
+     * @param y_loc -y location of point
+     * @return -measure of similarity
+     */
     private double localDensity(DataPoint a_point, int x_loc,int y_loc){
     	double score = 0; 
     	int x_start = x_loc - ((n_patch-1)/2);
@@ -189,13 +206,19 @@ public class AntColonyClusterer extends Clusterer
 	    		}
     		}
     	}
+    	//divide by size of visual field
     	score = score/(n_patch*n_patch);
-    	
+    	//make sure it is greater than 0
     	if(score < 0){
     		score = 0;
     	}
     	return score;
     }
+    /**
+     * Uses a hierarchical agglomerative clustering algorithm to place points
+     * which are closest together on the 2-d particle map in the same clusters
+     * RESULTS are stored in the "_clusters" variable
+     */
     private void extractClusters(){
     	List<AntCluster> currentClusters = new ArrayList<AntCluster>();
     	_clusters = new LinkedList<Cluster>();
@@ -228,6 +251,7 @@ public class AntColonyClusterer extends Clusterer
     				currentClusters.remove(currentClusters.get(closestClusterIndex).getClosestClusterIndex()));
     	}
     	_output.writeLine("ACO clusters formed!");
+    	//move antColony clusters into cluster type so they can be analyzed
     	for(int i = 0 ; i < _numClusters; i ++){
     		Cluster newCluster = new Cluster();
     		for(int j = 0; j < currentClusters.get(i).getMembers().size(); j ++){
@@ -237,6 +261,9 @@ public class AntColonyClusterer extends Clusterer
     		_clusters.add(newCluster);
     	}
     }
+    /**
+     * prints a text output of the current location of datapoints on the map
+     */
     private void printMap(){
     	for(int i =0; i < _grid.length; i ++){
     		for(int j = 0 ; j < _grid[i].length; j++){

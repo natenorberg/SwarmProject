@@ -48,7 +48,11 @@ public abstract class Clusterer
 
         return totalDistance / (double) _clusters.size();
     }
-
+    /**
+     * Finds the average distance between centroids of clusters
+     * 
+     * @return inter-cluster distance
+     */
     protected double averageDistanceBetweenCenters()
     {
         double totalDistance = 0;

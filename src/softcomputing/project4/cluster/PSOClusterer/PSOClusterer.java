@@ -60,6 +60,7 @@ public class PSOClusterer extends Clusterer
 		double bestFitness = -1;
 		double currentFitness = -1;
 		boolean changed = false;
+		int nochange = 0; //iterations without new global best
 		for(int i = 0; i < _it_num; i ++){
 			for(int j = 0 ; j < swarm.length; j ++){//for each particle 
 				
@@ -74,13 +75,14 @@ public class PSOClusterer extends Clusterer
 					_output.writeLine("new global best: "+bestFitness);
 					changed = true;
 					globalBest = swarm[j].getCentroidsCopy();
+					nochange =0;
 				}
 				//update the cluster centroids
-				swarm[j].updateCentroids(globalBest, changed,i);
+				swarm[j].updateCentroids(globalBest, nochange,i);
 			}		
 			extractClusters(globalBest, dataSet);
 			if(changed){
-		        String outputString = String.format("Run %d: ", i);
+		        String outputString = String.format("PSO, interation %d: ", i);
 		
 		        if (_printIntraClusterDistance)
 		            outputString = outputString.concat(String.format("Average distance in clusters: %f, ", this.evaluateCluster()));
