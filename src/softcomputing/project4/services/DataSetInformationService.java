@@ -91,6 +91,7 @@ public class DataSetInformationService
             	_numOutputs = 2;
             	_filename = "SC_data/Fertility/fertility_no_class_lables.csv";
             	_description = "Fertility";
+            	break;
             default:
                 throw new IllegalArgumentException("No information available for that data set");
         }
